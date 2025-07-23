@@ -25,10 +25,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init # ← envブロックは不要
+        run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan # ← envブロックは不要
+        run: terraform plan -out=tfplan
 
-      # - name: Terraform Apply
-      #   run: terraform apply -auto-approve tfplan # ← envブロックは不要
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
