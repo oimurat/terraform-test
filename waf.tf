@@ -46,10 +46,10 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
             #Required
             action_name = "test-action-401"
             name = "test-rule-401"
-            type = "BLOCK"
+            type = "AAAAA"
 
             #Optional
-            condition = "ip.src in ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']"
+            condition = "ip.src == '165.85.1.70/32'"
             condition_language = "JMESPATH"
         }
     }
