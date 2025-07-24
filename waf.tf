@@ -36,4 +36,21 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
     }
 
     display_name = "test-web-app-firewall-policy"
+
+    request_access_control {
+        #Required
+        default_action_name = "test-action-allow"
+
+        #Optional
+        rules {
+            #Required
+            action_name = "test-action-401"
+            name = "test-rule-401"
+            type = "BLOCK"
+
+            #Optional
+            condition = "ip.src in ['10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16']"
+            condition_language = "JMESPATH"
+        }
+    }
 }
