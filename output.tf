@@ -41,3 +41,19 @@ output "time-created" {
 output "name-of-first-availability-domain" {
   value = data.oci_identity_availability_domains.ads.availability_domains[0].name
 }
+
+output "web-app-firewall-policy-OCID" {
+  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.id
+}
+
+output "web-app-firewall-policy-name" {
+  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.display_name
+}
+
+output "web-app-firewall-policy-state" {
+  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.state
+}
+
+output "web-app-firewall-policy-time-created" {
+  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.time_created
+}
