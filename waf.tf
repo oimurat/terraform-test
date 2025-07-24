@@ -45,11 +45,11 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
         rules {
             #Required
             action_name = "test-action-401"
-            name = "test-rule-401"
-            type = "AAAAA"
+            name = "request-access-rule"
+            type = "ACCESS_CONTROL"
 
             #Optional
-            condition = "ip.src == '165.85.1.70/32'"
+            condition = "!i_contains(['JP'], connection.source.geo.countryCode)"
             condition_language = "JMESPATH"
         }
     }
