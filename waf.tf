@@ -12,7 +12,7 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
         body {
             #Required
             text = "Unauthorized"
-            type = "text/plain"
+            type = "application/json"
         }
         code = 401
         headers {
