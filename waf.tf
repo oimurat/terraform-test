@@ -43,7 +43,7 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
             #Required
             action_name = "test-action-401"
             name = "test-access-control-rule"
-            type = "ACCESS_CONTROL"
+            type = "RETURN_HTTP_RESPONSE"
 
             #Optional
             condition = "!i_contains(['JP'], connection.source.geo.countryCode)"
@@ -59,7 +59,7 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
             #Required
             action_name = "test-action-401"
             name = "test-request-protection-rule"
-            type = "PROTECTION"
+            type = "RETURN_HTTP_RESPONSE"
             protection_capabilities {
                 #Required
                 key = "9300000"
@@ -77,6 +77,25 @@ resource "oci_waf_web_app_firewall_policy" "test_web_app_firewall_policy" {
                 max_number_of_arguments = 255
                 max_single_argument_length = 2000
                 max_total_argument_length = 64000
+            }
+        }
+    }
+
+    request_rate_limiting {
+
+        #Optional
+        rules {
+            #Required
+            action_name = "test-action-401"
+            name = "test-request-rate-limiting-rule"
+            type = "RETURN_HTTP_RESPONSE"
+            configurations {
+                #Required
+                period_in_seconds = 1
+                requests_limit = 100
+
+                #Optional
+                action_duration_in_seconds = 0
             }
         }
     }
