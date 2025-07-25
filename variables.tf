@@ -38,6 +38,11 @@ variable "instance_image_ocid" {
 }
 
 variable "subnet_ocid" {
-  description = "インスタンスを配置するサブネットのOCID"
+  description = "サブネットのOCID"
+  type        = string
+}
+
+variable "load_balancer_ocid" {
+  description = "WAFを配置するロードバランサーのOCID"
   type        = string
 }
