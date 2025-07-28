@@ -1,4 +1,4 @@
-resource "oci_apigateway_gateway" "test_gateway" {
+resource "oci_apigateway_gateway" "test_api_gateway" {
     #Required
     compartment_id = var.compartment_ocid
     endpoint_type = "PUBLIC"
@@ -11,7 +11,7 @@ resource "oci_apigateway_gateway" "test_gateway" {
 resource "oci_apigateway_deployment" "test_deployment" {
     #Required
     compartment_id = var.compartment_ocid
-    gateway_id = oci_apigateway_gateway.test_gateway.id
+    gateway_id = oci_apigateway_gateway.test_api_gateway.id
     path_prefix = "/"
     specification {
 
