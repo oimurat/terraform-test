@@ -32,11 +32,6 @@ variable "compartment_ocid" {
   type        = string
 }
 
-variable "instance_image_ocid" {
-  description = "インスタンスに使用するイメージのOCID"
-  type        = string
-}
-
 variable "subnet_ocid" {
   description = "サブネットのOCID"
   type        = string
