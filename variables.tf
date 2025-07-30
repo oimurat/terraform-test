@@ -27,8 +27,8 @@ variable "region" {
 
 # --- リソース作成用の変数 ---
 
-variable "compartment_ocid" {
-  description = "リソースを作成するコンパートメントのOCID"
+variable "testing_compartment_ocid" {
+  description = "リソースを作成するtestingコンパートメントのOCID"
   type        = string
 }
 

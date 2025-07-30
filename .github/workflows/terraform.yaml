@@ -14,7 +14,7 @@ jobs:
       TF_VAR_private_key:  ${{ secrets.OCI_PRIVATE_KEY }}
       TF_VAR_fingerprint:  ${{ secrets.OCI_FINGERPRINT }}
       TF_VAR_region:       ${{ secrets.OCI_REGION }}
-      TF_VAR_compartment_ocid: ${{ secrets.OCI_COMPARTMENT_OCID }}
+      TF_VAR_testing_compartment_ocid: ${{ secrets.OCI_TESTING_COMPARTMENT_OCID }}
       TF_VAR_instance_image_ocid: ${{ secrets.OCI_INSTANCE_IMAGE_OCID }}
       TF_VAR_subnet_ocid: ${{ secrets.OCI_SUBNET_OCID }}
       TF_VAR_load_balancer_ocid: ${{ secrets.OCI_LOAD_BALANCER_OCID }}
