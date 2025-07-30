@@ -27,13 +27,8 @@ variable "region" {
 
 # --- リソース作成用の変数 ---
 
-variable "compartment_ocid" {
-  description = "リソースを作成するコンパートメントのOCID"
-  type        = string
-}
-
-variable "instance_image_ocid" {
-  description = "インスタンスに使用するイメージのOCID"
+variable "testing_compartment_ocid" {
+  description = "リソースを作成するtestingコンパートメントのOCID"
   type        = string
 }
 
@@ -44,5 +39,15 @@ variable "subnet_ocid" {
 
 variable "load_balancer_ocid" {
   description = "WAFを配置するロードバランサーのOCID"
+  type        = string
+}
+
+variable "management_compartment_ocid" {
+  description = "管理用コンパートメントのOCID"
+  type        = string
+}
+
+variable "ec_service_compartment_ocid" {
+  description = "外販用コンパートメントのOCID"
   type        = string
 }
