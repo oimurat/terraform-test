@@ -41,3 +41,13 @@ variable "load_balancer_ocid" {
   description = "WAFを配置するロードバランサーのOCID"
   type        = string
 }
+
+variable "management_compartment_ocid" {
+  description = "管理用コンパートメントのOCID"
+  type        = string
+}
+
+variable "ec_service_compartment_ocid" {
+  description = "外販用コンパートメントのOCID"
+  type        = string
+}

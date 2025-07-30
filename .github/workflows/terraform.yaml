@@ -18,6 +18,8 @@ jobs:
       TF_VAR_instance_image_ocid: ${{ secrets.OCI_INSTANCE_IMAGE_OCID }}
       TF_VAR_subnet_ocid: ${{ secrets.OCI_SUBNET_OCID }}
       TF_VAR_load_balancer_ocid: ${{ secrets.OCI_LOAD_BALANCER_OCID }}
+      TF_VAR_management_compartment_ocid: ${{ secrets.OCI_MANAGEMENT_COMPARTMENT_OCID }}
+      TF_VAR_ec_service_compartment_ocid: ${{ secrets.OCI_EC_SERVICE_COMPARTMENT_OCID }}
 
     steps:
       - name: Checkout
