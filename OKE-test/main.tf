@@ -1,318 +1,154 @@
-# VCN
-resource "oci_core_vcn" "oke_vcn" {
-  compartment_id = var.compartment_ocid
-  cidr_block     = var.vcn_cidr
-  display_name   = "${var.oke_cluster_name}-vcn"
-  dns_label      = "${replace(var.oke_cluster_name, "-", "")}vcn"
-  is_ipv6enabled = false
-}
 
-# Internet Gateway
-resource "oci_core_internet_gateway" "oke_igw" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-igw"
-  enabled        = true
-}
-
-# NAT Gateway
-resource "oci_core_nat_gateway" "oke_nat_gw" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-nat-gw"
-}
-
-# Service Gateway
-resource "oci_core_service_gateway" "oke_sgw" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-sgw"
-
-  services {
-    # 以前: service_id = "ocid1.service.oc1.phx.oracle_object_storage" # リージョンに合わせて変更が必要な場合あり
-    # 修正後 (東京リージョン向け):
-    service_id = "ocid1.service.oc1.ap-tokyo-1.objectstorage" # 東京リージョンのObject StorageサービスID
-  }
-}
-
-# Route Table for Private Subnet (Nodes) - routes to NAT Gateway and Service Gateway
-resource "oci_core_route_table" "oke_private_rt" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-private-rt"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.oke_nat_gw.id
-  }
-  route_rules {
-    # 以前: destination = "all-phx-services-in-oracle-services-network"
-    # 修正後 (東京リージョン向け):
-    destination       = "all-ap-tokyo-1-services-in-oracle-services-network"
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.oke_sgw.id
-  }
-}
-
-# Security List for K8s API Subnet
-resource "oci_core_security_list" "oke_api_sl" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-api-sl"
-
-  ingress_security_rules {
-    protocol = "6" # TCP
-    source   = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 6443
-      max = 6443
-    }
-  }
-  ingress_security_rules {
-    protocol = "6" # TCP for ssh to bastion if needed (adjust source if you have bastion)
-    source   = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
-    stateless = false
-  }
-}
-
-# Security List for Node Subnet
-resource "oci_core_security_list" "oke_node_sl" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-node-sl"
-
-  ingress_security_rules {
-    protocol = "6" # TCP for SSH
-    source   = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
-  ingress_security_rules {
-    protocol = "6" # TCP for Kubelet
-    source   = var.k8s_api_subnet_cidr
-    stateless = false
-    tcp_options {
-      min = 10250
-      max = 10250
-    }
-  }
-  ingress_security_rules {
-    protocol = "6" # TCP for NodePort services
-    source   = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 30000
-      max = 32767
-    }
-  }
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
-    stateless = false
-  }
-}
-
-# Security List for LB Subnet
-resource "oci_core_security_list" "oke_lb_sl" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-lb-sl"
-
-  ingress_security_rules {
-    protocol = "all"
-    source   = "0.0.0.0/0" # Allow all incoming traffic to the LB (adjust if needed)
-    stateless = false
-  }
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
-    stateless = false
-  }
-}
-
-# K8s API Subnet
-resource "oci_core_subnet" "oke_api_subnet" {
-  compartment_id   = var.compartment_ocid
-  vcn_id           = oci_core_vcn.oke_vcn.id
-  cidr_block       = var.k8s_api_subnet_cidr
-  display_name     = "${var.oke_cluster_name}-api-subnet"
-  security_list_ids = [oci_core_security_list.oke_api_sl.id]
-  route_table_id   = oci_core_vcn.oke_vcn.default_route_table_id # 通常はデフォルトルートテーブル
-  prohibit_public_ip_on_vnic = false # APIエンドポイントは公開IPが必要
-}
-
-# Node Subnet
-resource "oci_core_subnet" "oke_node_subnet" {
-  compartment_id             = var.compartment_ocid
-  vcn_id                     = oci_core_vcn.oke_vcn.id
-  cidr_block                 = var.node_subnet_cidr
-  display_name               = "${var.oke_cluster_name}-node-subnet"
-  security_list_ids          = [oci_core_security_list.oke_node_sl.id]
-  route_table_id             = oci_core_vcn.oke_vcn.default_route_table_id # ノードからはインターネットへアクセスできるようにIGWやNAT GWへのルートが必要
-  prohibit_public_ip_on_vnic = true # ノードはプライベートIPのみ
-}
-
-# Load Balancer Subnet
-resource "oci_core_subnet" "oke_lb_subnet" {
-  compartment_id             = var.compartment_ocid
-  vcn_id                     = oci_core_vcn.oke_vcn.id
-  cidr_block                 = var.lb_subnet_cidr
-  display_name               = "${var.oke_cluster_name}-lb-subnet"
-  security_list_ids          = [oci_core_security_list.oke_lb_sl.id]
-  route_table_id             = oci_core_vcn.oke_vcn.default_route_table_id
-  prohibit_public_ip_on_vnic = false # LBは公開IPが必要
-}
-
-# Route Table for Public Subnets (API, LB) - routes to Internet Gateway
-resource "oci_core_route_table" "oke_public_rt" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-public-rt"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.oke_igw.id
-  }
-}
-
-# Route Table for Private Subnet (Nodes) - routes to NAT Gateway and Service Gateway
-/*resource "oci_core_route_table" "oke_private_rt" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.oke_vcn.id
-  display_name   = "${var.oke_cluster_name}-private-rt"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_nat_gateway.oke_nat_gw.id
-  }
-  route_rules {
-    destination       = "all-phx-services-in-oracle-services-network" # リージョンに合わせて変更が必要な場合あり
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.oke_sgw.id
-  }
-}
-*/
-
-# Associate route tables with subnets
-resource "oci_core_subnet" "oke_api_subnet_with_rt" {
-  for_each = { "api" : oci_core_subnet.oke_api_subnet, "lb" : oci_core_subnet.oke_lb_subnet }
-  compartment_id = each.value.compartment_id
-  vcn_id = each.value.vcn_id
-  cidr_block = each.value.cidr_block
-  display_name = each.value.display_name
-  security_list_ids = each.value.security_list_ids
-  route_table_id = oci_core_route_table.oke_public_rt.id
-  prohibit_public_ip_on_vnic = each.value.prohibit_public_ip_on_vnic
-  depends_on = [oci_core_route_table.oke_public_rt]
-}
-
-resource "oci_core_subnet" "oke_node_subnet_with_rt" {
-  compartment_id = oci_core_subnet.oke_node_subnet.compartment_id
-  vcn_id = oci_core_subnet.oke_node_subnet.vcn_id
-  cidr_block = oci_core_subnet.oke_node_subnet.cidr_block
-  display_name = oci_core_subnet.oke_node_subnet.display_name
-  security_list_ids = oci_core_subnet.oke_node_subnet.security_list_ids
-  route_table_id = oci_core_route_table.oke_private_rt.id
-  prohibit_public_ip_on_vnic = oci_core_subnet.oke_node_subnet.prohibit_public_ip_on_vnic
-  depends_on = [oci_core_route_table.oke_private_rt]
-}
+####################################################################################
+# Terraform module: Oracle Kubernetes Engine Flat Module (Adapted).     	   #
+#                                                                        	   #
+# Copyright (c) 2025 Oracle        Author: Mahamat H. Guiagoussou and Payal Sharma #
+####################################################################################
 
 
 # OKE Cluster
-resource "oci_containerengine_cluster" "oke_cluster" {
-  compartment_id          = var.compartment_ocid
-  name                    = var.oke_cluster_name
-  kubernetes_version      = var.oke_kubernetes_version
-  vcn_id                  = oci_core_vcn.oke_vcn.id
+resource "oci_containerengine_cluster" "k8s_cluster" {
+  count = (var.is_k8cluster_created) ? 1 : 0
+
+  #Required
+  compartment_id     = var.compartment_id
+  kubernetes_version = var.control_plane_kubernetes_version
+  name               = "${var.display_name_prefix}-k8s-Cluster"
+  vcn_id             = oci_core_vcn.this.*.id[0]
+
+  #Optional
+  cluster_pod_network_options {
+    #Required
+    cni_type = var.cni_type
+  }
+
+
   endpoint_config {
-    subnet_id = oci_core_subnet.oke_api_subnet.id
-    is_public_ip_enabled = true # APIエンドポイントは公開IP
+    #Optional
+    is_public_ip_enabled = var.control_plane_is_public
+    subnet_id            = oci_core_subnet.Private-Subnet-For-K8-API-Endpoint.*.id[0]
   }
+
+
+  image_policy_config {
+    #Optional
+    is_policy_enabled = var.image_signing_enabled
+    dynamic "key_details" {
+      for_each = var.image_signing_enabled == true ? toset(var.image_signing_key_id) : []
+      content {
+        kms_key_id = var.image_signing_key_id.value
+        # Optional - Include if you want to use your own encryption key for image signing, else it's encrypted using Oracle-managed keys
+        # kms_key_id = oci_kms_key.test_key.id
+      }
+    }
+  }
+  # Optional - use if you want to bring your own encryption key for k8 secrets, else it's encrypted using Oracle-managed keys
+  # kms_key_id = oci_kms_key.test_key.id
+
+
   options {
-    #kubernetes_dashboard_enabled = false
-    #tiller_enabled               = false
-    add_ons {
+
+    #Optional
+    add_ons { # https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengintroducingclusteraddons.htm or OCI CLI command: oci ce addon-option list --kubernetes-version v1.30.1
+      #Optional
       is_kubernetes_dashboard_enabled = false
-      is_tiller_enabled               = false
     }
-    admission_controller_options {
-      is_pod_security_policy_enabled = false
+
+    kubernetes_network_config {
+      #Optional
+      pods_cidr     = "10.244.0.0/16" # CNI-assigned IP range
+      services_cidr = "10.96.0.0/16"  # IP range for ClusterIP services
     }
-    service_lb_subnet_ids = [oci_core_subnet.oke_lb_subnet.id]
+    
+    # This block is used to assign default tags to the PVCs, these can be overwritten by the storage class. 
+    persistent_volume_config {
+      #Optional
+      # defined_tags = {"Operations.CostCenter"= "42"}
+      # freeform_tags = {"Department"= "Finance"}
+    }
+    # Uses to assign default tags to load balancers provisioned by services of type LoadBalancer
+    service_lb_config {
+
+    }
+    # OCID of subnet where load balancers will reside.
+    service_lb_subnet_ids = oci_core_subnet.Public-Subnet-For-Load-Balancers.*.id
+    
   }
+  type = var.cluster_type #ENHANCED_CLUSTER or BASIC_CLUSTER
 }
 
-# OKE Node Pool
-resource "oci_containerengine_node_pool" "oke_node_pool" {
-  cluster_id        = oci_containerengine_cluster.oke_cluster.id
-  compartment_id    = var.compartment_ocid
-  name              = "${var.oke_cluster_name}-node-pool"
-  kubernetes_version = var.oke_kubernetes_version # クラスターバージョンと合わせる
-  node_shape        = var.node_shape
-  node_shape_config {
-    ocpus = var.node_ocpus
-    memory_in_gbs = var.node_memory_in_gbs
+
+
+# Node Pool
+resource "oci_containerengine_node_pool" "node_pool_one" {
+  depends_on = [oci_containerengine_cluster.k8s_cluster]
+
+  for_each = (var.is_nodepool_created) ? var.node_pools : {}
+
+  #Required
+  cluster_id     = oci_containerengine_cluster.k8s_cluster.*.id[0]
+  compartment_id = var.compartment_id
+  name           = var.node_pools[each.key].name
+  node_shape     = var.node_pools[each.key].shape
+
+  dynamic "initial_node_labels" {
+    for_each = var.node_pools[each.key].node_labels
+    content {
+      #Optional
+      key   = initial_node_labels.key
+      value = initial_node_labels.value
+    }
   }
-  node_source_details {
-    image_id    = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaaayciyuq2akqdjmoxv444besgde5tbkcskcbj5dhewjnwhqqplnnq" # ご指定のイメージOCID
-    source_type = "IMAGE"
-  }
+
+  kubernetes_version = var.worker_nodes_kubernetes_version
+  
   node_config_details {
-    placement_configs {
-      availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
-      subnet_id           = oci_core_subnet.oke_node_subnet.id
+    #Required
+    dynamic "placement_configs" {
+      for_each = var.node_pools[each.key].availability_domains
+      content {
+        #Required
+        availability_domain = placement_configs.value
+        subnet_id           = oci_core_subnet.Private-Subnet-For-Worker-Nodes.*.id[0]
+      }
     }
-    size = var.node_count
-    is_pv_encryption_in_transit_enabled = true # 推奨
+    
+    size = var.node_pools[each.key].number_of_nodes
+
+    #Optional
+    is_pv_encryption_in_transit_enabled = var.node_pools[each.key].pv_in_transit_encryption
+    node_pool_pod_network_option_details {
+      #Required
+      cni_type = var.cni_type
+        # ADD THIS for VCN-Native CNI
+      pod_subnet_ids = var.create_pod_network_subnet ? [oci_core_subnet.Private-Subnet-For-Worker-Nodes.*.id[0]] : [ ]
+    }
   }
-  # SSHキーペアは別途作成し、fingerprintをここに指定するか、ユーザーデータで設定する
-  # ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ..." # ここに公開鍵の内容を直接記述するか、ファイルから読み込む
-}
 
-# Data Source to get Availability Domains
-data "oci_identity_availability_domains" "ads" {
-  compartment_id = var.compartment_ocid
-}
+  # node_eviction_node_pool_settings {
+  #     #Optional
+  #     eviction_grace_duration = var.node_pool_node_eviction_node_pool_settings_eviction_grace_duration
+  #     is_force_delete_after_grace_duration = var.node_pool_node_eviction_node_pool_settings_is_force_delete_after_grace_duration
+  # }
+  node_pool_cycling_details {
+    #Optional
+    is_node_cycling_enabled = var.node_pools[each.key].node_cycle_config.node_cycling_enabled
+    maximum_surge           = var.node_pools[each.key].node_cycle_config.maximum_surge
+    maximum_unavailable     = var.node_pools[each.key].node_cycle_config.maximum_unavailable
+  }
 
-# Data Source to get Oracle Linux 9 Image OCID
-data "oci_core_images" "oracle_linux_image" {
-  compartment_id = var.compartment_ocid
-  operating_system = "Oracle Linux"
-  operating_system_version = "9"
-  shape = var.node_shape
-  sort_by = "TIMECREATED"
-  sort_order = "DESC"
-}
+  node_shape_config {
+    #Optional
+    memory_in_gbs = var.node_pools[each.key].shape_config.memory
+    ocpus         = var.node_pools[each.key].shape_config.ocpus
+  }
 
-output "oke_cluster_id" {
-  value = oci_containerengine_cluster.oke_cluster.id
-}
-
-output "oke_cluster_endpoint" {
-  value = oci_containerengine_cluster.oke_cluster.endpoints[0].kubernetes
-  description = "The Kubernetes API endpoint of the OKE cluster."
-}
-
-output "oke_node_pool_id" {
-  value = oci_containerengine_node_pool.oke_node_pool.id
-}
-
-output "kubeconfig_file" {
-  value = "To generate kubeconfig, use 'oci ce cluster create-kubeconfig --cluster-id ${oci_containerengine_cluster.oke_cluster.id} --file C://Users//odaj//Desktop//terraform-test-20250729.kube/config --region ${var.region} --token-version 2.0 --kube-endpoint PUBLIC_ENDPOINT'"
+  node_source_details {
+    #Required
+    image_id    = var.node_pools[each.key].image
+    source_type = "IMAGE"
+    #Optional
+    boot_volume_size_in_gbs = var.node_pools[each.key].boot_volume_size
+  }
+  ssh_public_key = file(var.node_pools[each.key].ssh_key)
 }
