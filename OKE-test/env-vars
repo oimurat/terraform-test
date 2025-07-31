@@ -1,8 +1,0 @@
-export TF_VAR_user_ocid=REPLACE_WITH_YOUR_USER_OCID
-export TF_VAR_tenancy_ocid=REPLACE_WITH_YOUR_TENANCY_OCID
-export TF_VAR_fingerprint=REPLACE_WITH_YOUR_FINGERPRINT
-export TF_VAR_private_key_path=REPLACE_WITH_THE_PATH_TO_YOUR_API_PRIVATE_KEY
-export TF_VAR_region=REPLACE_WITH_YOUR_DEPLOYMENT_REGION
-
-export TF_LOG=INFO
-export TF_LOG_PATH=~/oke_terraform_tests/tf.log

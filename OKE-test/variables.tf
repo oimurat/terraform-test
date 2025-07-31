@@ -14,8 +14,9 @@ variable "tenancy_ocid" {
 
 
 variable "region" {
-  description = "OCI region where resources will be created for Tenancy"
+  description = "OCI Region where resources will be deployed"
   type        = string
+  default     = "ap-tokyo-1" # 東京リージョン
 }
 
 
@@ -74,26 +75,26 @@ variable "vcn_cidr_block" {
 
 variable "k8apiendpoint_private_subnet_cidr_block" {
   description = "Kubernetes API Endpoint Private Subnet CIDR Block"
-  default     = "10.0.0.0/30"
+  default     = "10.0.0.0/28"
 }
 
 variable "workernodes_private_subnet_cidr_block" {
   description = "Worker Nodes API Endpoint Private Subnet CIDR Block"
-  default     = "10.0.1.0/24"
+  default     = "10.0.10.0/24"
 }
 
 variable "serviceloadbalancers_public_subnet_cidr_block" {
   description = "service Load Balancers Public Subnet CIDR Block"
-  default     = "10.0.2.0/24"
+  default     = "10.0.20.0/24"
 }
 
 variable "bastion_public_subnet_cidr_block" {
   description = "Bastion Public Subnet CIDR Block"
-  default     = "10.0.3.0/24"
+  default     = "10.0.30.0/24"
 }
 variable "pod_network_cidr" {
   description = "Bastion Public Subnet CIDR Block"
-  default     = "10.0.1.0/24"
+  default     = "10.0.10.0/24"
 }
 
 
@@ -103,9 +104,10 @@ variable "image_ids" {
   description = "OCI Region <--> Compute Image OCID"
   type        = map(string)
   default = {
-    "us-phoenix-1" = "ocid1.image.oc1.phx.aaaaaaaahgrs3zcwrvutjtni557ttrt62uggseijsmqxacr7dym423uaokcq"
-    "us-ashburn-1" = "ocid1.image.oc1.iad.aaaaaaaal5ocygrbx2lfvrnugr6yqlskpomeww6d7pqb3zes2pzho3td4gcq" 
-    # Add more regions as needed
+    "ap-tokyo-1"   = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaaayciyuq2akqdjmoxv444besgde5tbkcskcbj5dhewjnwhqqplnnq"
+  #  "us-phoenix-1" = "ocid1.image.oc1.phx.aaaaaaaahgrs3zcwrvutjtni557ttrt62uggseijsmqxacr7dym423uaokcq"
+  #  "us-ashburn-1" = "ocid1.image.oc1.iad.aaaaaaaal5ocygrbx2lfvrnugr6yqlskpomeww6d7pqb3zes2pzho3td4gcq" 
+  #  # Add more regions as needed
   }
 }
 
@@ -181,45 +183,7 @@ variable "node_pools" {
   description = "Node pool configuration."
 }
 
-
-/*
-# Node Pools
-variable "node_pools" {
-  type        = map(any)
-  description = "Node pool configuration."
-  default = {
-  node_pool_one = {
-    name  = "node_pool_one",
-    # https://docs.oracle.com/en-us/iaas/Content/ContEng/Reference/contengimagesshapes.htm
-    shape = "VM.Standard.E3.Flex", 
-    shape_config = {
-      ocpus  = 1
-      memory = 16
-    },
-    boot_volume_size = 50
-    # https://docs.oracle.com/en-us/iaas/images/oke-worker-node-oracle-linux-8x/
-    # image = "ocid1.image.oc1.iad.aaaaaaaaszyuodke6gbsy3fjypldthvf2zlci2brmjaoxqlkujbzizak6p3q" # For 1.3.1
-    image = "ocid1.image.oc1.iad.aaaaaaaahrvazsdc6czqgsdypddpij47kzpjfhi3dzi2cmoz3wrqw43ulzja" # 1.32.1
-    node_labels = {
-      hello= "mycluster"
-    },
-    # Run command “oci iam availability-domain list” to see ADs for your region.
-    availability_domains     = ["GqIF:US-ASHBURN-AD-1"] # "GqIF:US-ASHBURN-AD-2" and "GqIF:US-ASHBURN-AD-3"
-    number_of_nodes          = 1,
-    pv_in_transit_encryption = false,
-    node_cycle_config = {
-      node_cycling_enabled = false
-      maximum_surge        = 1
-      maximum_unavailable  = 0
-    },
-    ssh_key = "worker_node_ssh_key.pub"
-  }
-}
-}
-
-*/
-
-
+# Create Pod Network Subnet
 variable "create_pod_network_subnet" {
   description = "Create PODs Network subnet for OKE. To be used with CNI Type OCI_VCN_IP_NATIVE"
 }

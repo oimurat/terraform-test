@@ -59,17 +59,17 @@ output "Public-Subnet-For-LoadBalancer_OCID" {
 
 # OKE Cluster OCID
 output "oke_cluster_id" {
-  value = oci_containerengine_cluster.k8s_cluster.*.id
+  value = oci_containerengine_cluster.oke_cluster.*.id
 }
 
 # OKE Cluster Display Name
 output "oke_cluster_display_name" {
-  value = oci_containerengine_cluster.k8s_cluster.*.name
+  value = oci_containerengine_cluster.oke_cluster.*.name
 }
 
 # OKE Cluster Detailed 
 output "oke_cluster_ip_addresses" {
-  value = one(oci_containerengine_cluster.k8s_cluster.*.endpoints)
+  value = one(oci_containerengine_cluster.oke_cluster.*.endpoints)
 }
 
 
