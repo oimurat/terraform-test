@@ -62,98 +62,98 @@
 #   value = oci_apigateway_deployment.test_deployment.time_created
 # }
 
-output "terraform_ec_service_group_OCID" {
-  value = oci_identity_group.terraform_ec_service_group.id
-}
+# output "terraform_ec_service_group_OCID" {
+#   value = oci_identity_group.terraform_ec_service_group.id
+# }
 
-output "terraform_ec_service_group_name" {
-  value = oci_identity_group.terraform_ec_service_group.name
-}
+# output "terraform_ec_service_group_name" {
+#   value = oci_identity_group.terraform_ec_service_group.name
+# }
 
-output "terraform_ec_service_group_state" {
-  value = oci_identity_group.terraform_ec_service_group.state
-}
+# output "terraform_ec_service_group_state" {
+#   value = oci_identity_group.terraform_ec_service_group.state
+# }
 
-output "terraform_ec_service_group_time_created" {
-  value = oci_identity_group.terraform_ec_service_group.time_created
-}
+# output "terraform_ec_service_group_time_created" {
+#   value = oci_identity_group.terraform_ec_service_group.time_created
+# }
 
-output "terraform_native_ingress_controller_dyn_group_OCID" {
-  value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.id
-}
+# output "terraform_native_ingress_controller_dyn_group_OCID" {
+#   value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.id
+# }
 
-output "terraform_native_ingress_controller_dyn_group_name" {
-  value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.name
-}
+# output "terraform_native_ingress_controller_dyn_group_name" {
+#   value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.name
+# }
 
-output "terraform_native_ingress_controller_dyn_group_state" {
-  value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.state
-}
+# output "terraform_native_ingress_controller_dyn_group_state" {
+#   value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.state
+# }
 
-output "terraform_native_ingress_controller_dyn_group_time_created" {
-  value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.time_created
-}
+# output "terraform_native_ingress_controller_dyn_group_time_created" {
+#   value = oci_identity_dynamic_group.terraform_native_ingress_controller_dyn_group.time_created
+# }
 
-output "terraform_ec_service_policy_OCID" {
-  value = oci_identity_policy.terraform_ec_service_policy.id
-}
+# output "terraform_ec_service_policy_OCID" {
+#   value = oci_identity_policy.terraform_ec_service_policy.id
+# }
 
-output "terraform_ec_service_policy_name" {
-  value = oci_identity_policy.terraform_ec_service_policy.name
-}
+# output "terraform_ec_service_policy_name" {
+#   value = oci_identity_policy.terraform_ec_service_policy.name
+# }
 
-output "terraform_ec_service_policy_state" {
-  value = oci_identity_policy.terraform_ec_service_policy.state
-}
+# output "terraform_ec_service_policy_state" {
+#   value = oci_identity_policy.terraform_ec_service_policy.state
+# }
 
-output "terraform_ec_service_policy_time_created" {
-  value = oci_identity_policy.terraform_ec_service_policy.time_created
-}
+# output "terraform_ec_service_policy_time_created" {
+#   value = oci_identity_policy.terraform_ec_service_policy.time_created
+# }
 
-output "terraform_management_native_ingress_controller_policy_OCID" {
-  value = oci_identity_policy.terraform_management_native_ingress_controller_policy.id
-}
+# output "terraform_management_native_ingress_controller_policy_OCID" {
+#   value = oci_identity_policy.terraform_management_native_ingress_controller_policy.id
+# }
 
-output "terraform_management_native_ingress_controller_policy_name" {
-  value = oci_identity_policy.terraform_management_native_ingress_controller_policy.name
-}
+# output "terraform_management_native_ingress_controller_policy_name" {
+#   value = oci_identity_policy.terraform_management_native_ingress_controller_policy.name
+# }
 
-output "terraform_management_native_ingress_controller_policy_state" {
-  value = oci_identity_policy.terraform_management_native_ingress_controller_policy.state
-}
+# output "terraform_management_native_ingress_controller_policy_state" {
+#   value = oci_identity_policy.terraform_management_native_ingress_controller_policy.state
+# }
 
-output "terraform_management_native_ingress_controller_policy_time_created" {
-  value = oci_identity_policy.terraform_management_native_ingress_controller_policy.time_created
-}
+# output "terraform_management_native_ingress_controller_policy_time_created" {
+#   value = oci_identity_policy.terraform_management_native_ingress_controller_policy.time_created
+# }
 
-output "terraform_testing_native_ingress_controller_policy_OCID" {
-  value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.id
-}
+# output "terraform_testing_native_ingress_controller_policy_OCID" {
+#   value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.id
+# }
 
-output "terraform_testing_native_ingress_controller_policy_name" {
-  value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.name
-}
+# output "terraform_testing_native_ingress_controller_policy_name" {
+#   value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.name
+# }
 
-output "terraform_testing_native_ingress_controller_policy_state" {
-  value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.state
-}
+# output "terraform_testing_native_ingress_controller_policy_state" {
+#   value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.state
+# }
 
-output "terraform_testing_native_ingress_controller_policy_time_created" {
-  value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.time_created
-}
+# output "terraform_testing_native_ingress_controller_policy_time_created" {
+#   value = oci_identity_policy.terraform_testing_native_ingress_controller_policy.time_created
+# }
 
-output "terraform_oke_service_policy_OCID" {
-  value = oci_identity_policy.terraform_oke_service_policy.id
-}
+# output "terraform_oke_service_policy_OCID" {
+#   value = oci_identity_policy.terraform_oke_service_policy.id
+# }
 
-output "terraform_oke_service_policy_name" {
-  value = oci_identity_policy.terraform_oke_service_policy.name
-}
+# output "terraform_oke_service_policy_name" {
+#   value = oci_identity_policy.terraform_oke_service_policy.name
+# }
 
-output "terraform_oke_service_policy_state" {
-  value = oci_identity_policy.terraform_oke_service_policy.state
-}
+# output "terraform_oke_service_policy_state" {
+#   value = oci_identity_policy.terraform_oke_service_policy.state
+# }
 
-output "terraform_oke_service_policy_time_created" {
-  value = oci_identity_policy.terraform_oke_service_policy.time_created
-}
+# output "terraform_oke_service_policy_time_created" {
+#   value = oci_identity_policy.terraform_oke_service_policy.time_created
+# }
