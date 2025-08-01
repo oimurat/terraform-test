@@ -49,23 +49,6 @@ resource "oci_identity_policy" "terraform_ec_service_testing_policy" {
     ]
 }
 
-resource "oci_identity_group" "terraform_ec_service_testing_read_group" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    description = "Terraformで作成したEC外販で使用する開発環境閲覧グループ"
-    name = "Terraform-EC-Service-Testing-Read-Group"
-}
-
-resource "oci_identity_policy" "terraform_ec_service_testing_read_policy" {
-    #Required
-    compartment_id = var.testing_compartment_ocid
-    description = "Terraformで作成したEC外販で使用する開発環境閲覧ポリシー"
-    name = "Terraform-EC-Service-Testing-Read-Policy"
-    statements = [
-        "Allow group Terraform-EC-Service-Testing-Read-Group to read all-resources in compartment id ${var.testing_compartment_ocid}"
-    ]
-}
-
 resource "oci_identity_group" "terraform_ec_service_management_group" {
     #Required
     compartment_id = var.tenancy_ocid
@@ -80,23 +63,6 @@ resource "oci_identity_policy" "terraform_ec_service_management_policy" {
     name = "Terraform-EC-Service-Management-Policy"
     statements = [
         "Allow group Terraform-EC-Service-Management-Group to manage all-resources in compartment id ${var.management_compartment_ocid}"
-    ]
-}
-
-resource "oci_identity_group" "terraform_ec_service_management_read_group" {
-    #Required
-    compartment_id = var.tenancy_ocid
-    description = "Terraformで作成したEC外販で使用する管理用環境閲覧グループ"
-    name = "Terraform-EC-Service-Management-Read-Group"
-}
-
-resource "oci_identity_policy" "terraform_ec_service_management_read_policy" {
-    #Required
-    compartment_id = var.management_compartment_ocid
-    description = "Terraformで作成したEC外販で使用する管理用環境閲覧ポリシー"
-    name = "Terraform-EC-Service-Management-Read-Policy"
-    statements = [
-        "Allow group Terraform-EC-Service-Management-Read-Group to read all-resources in compartment id ${var.management_compartment_ocid}"
     ]
 }
 
