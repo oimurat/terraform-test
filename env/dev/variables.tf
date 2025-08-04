@@ -34,12 +34,12 @@ variable "region" {
 
 # --- リソース作成用の変数 ---
 
-variable "testing_compartment_ocid" {
+variable "compartment_ocid" {
   description = "開発環境コンパートメントのOCID"
   type        = string
 }
 
-variable "testing_load_balancer_ocid" {
+variable "load_balancer_ocid" {
   description = "開発環境ロードバランサーのOCID"
   type        = string
 }
