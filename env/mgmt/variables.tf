@@ -1,3 +1,10 @@
+# --- 環境変数 ---
+
+variable "env" {
+  description = "管理環境名"
+  type        = string
+}
+
 # --- OCIプロバイダ認証用の変数 ---
 
 variable "tenancy_ocid" {
@@ -27,12 +34,12 @@ variable "region" {
 
 # --- リソース作成用の変数 ---
 
-variable "management_compartment_ocid" {
+variable "compartment_ocid" {
   description = "管理環境コンパートメントのOCID"
   type        = string
 }
 
-variable "management_load_balancer_ocid" {
+variable "load_balancer_ocid" {
   description = "管理環境ロードバランサーのOCID"
   type        = string
 }
