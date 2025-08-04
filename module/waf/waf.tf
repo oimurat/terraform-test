@@ -3,7 +3,7 @@ resource "oci_waf_web_app_firewall" "dev_web_app_firewall" {
     backend_type = "LOAD_BALANCER"
     compartment_id = var.testing_compartment_ocid
     load_balancer_id = var.testing_load_balancer_ocid
-    web_app_firewall_policy_id = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.id
+    web_app_firewall_policy_id = oci_waf_web_app_firewall_policy.dev_web_app_firewall_policy.id
 
     #Optional
     display_name = "${var.env}-web-app-firewall"
