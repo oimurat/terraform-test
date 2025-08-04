@@ -12,9 +12,9 @@ jobs:
       TF_VAR_fingerprint:  ${{ secrets.OCI_FINGERPRINT }}
       TF_VAR_region:       ${{ secrets.OCI_REGION }}
       TF_VAR_env:          ${{ secrets.MANAGEMENT_ENV_NAME }}
-      TF_VAR_management_compartment_ocid: ${{ secrets.OCI_MANAGEMENT_COMPARTMENT_OCID }}
+      TF_VAR_compartment_ocid: ${{ secrets.OCI_MANAGEMENT_COMPARTMENT_OCID }}
       # TF_VAR_subnet_ocid: ${{ secrets.OCI_MANAGEMENT_SUBNET_OCID }}
-      TF_VAR_management_load_balancer_ocid: ${{ secrets.OCI_MANAGEMENT_LOAD_BALANCER_OCID }}
+      TF_VAR_load_balancer_ocid: ${{ secrets.OCI_MANAGEMENT_LOAD_BALANCER_OCID }}
 
     steps:
       - name: Checkout
