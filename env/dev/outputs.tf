@@ -1,31 +1,31 @@
 output "web-app-firewall-policy-OCID" {
-  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.id
+  value = module.waf.web-app-firewall-policy-OCID
 }
 
 output "web-app-firewall-policy-name" {
-  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.display_name
+  value = module.waf.web-app-firewall-policy-name
 }
 
 output "web-app-firewall-policy-state" {
-  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.state
+  value = module.waf.web-app-firewall-policy-state
 }
 
 output "web-app-firewall-policy-time-created" {
-  value = oci_waf_web_app_firewall_policy.test_web_app_firewall_policy.time_created
+  value = module.waf.web-app-firewall-policy-time-created
 }
 
 output "web-app-firewall-OCID" {
-  value = oci_waf_web_app_firewall.test_web_app_firewall.id
+  value = module.waf.web-app-firewall-OCID
 }
 
 output "web-app-firewall-name" {
-  value = oci_waf_web_app_firewall.test_web_app_firewall.display_name
+  value = module.waf.web-app-firewall-name
 }
 
 output "web-app-firewall-state" {
-  value = oci_waf_web_app_firewall.test_web_app_firewall.state
+  value = module.waf.web-app-firewall-state
 }
 
 output "web-app-firewall-time-created" {
-  value = oci_waf_web_app_firewall.test_web_app_firewall.time_created
+  value = module.waf.web-app-firewall-time-created
 }
