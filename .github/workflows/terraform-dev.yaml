@@ -1,8 +1,5 @@
 name: "Terraform-Dev"
-on:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 jobs:
   terraform-dev:
     name: 'Terraform-Dev'
