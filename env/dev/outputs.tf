@@ -66,17 +66,17 @@ output "oke-cluster-OCID" {
   value = module.oke.oke-cluster-OCID
 }
 
-output "oke-cluster-name" {
-  value = module.oke.oke-cluster-name
-}
+# output "oke-cluster-name" {
+#   value = module.oke.oke-cluster-name
+# }
 
 output "oke-cluster-state" {
   value = module.oke.oke-cluster-state
 }
 
-output "oke-cluster-time-created" {
-  value = module.oke.oke-cluster-time-created
-}
+# output "oke-cluster-time-created" {
+#   value = module.oke.oke-cluster-time-created
+# }
 
 output "oke-node-pool-OCID" {
   value = module.oke.oke-node-pool-OCID
