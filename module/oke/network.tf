@@ -48,16 +48,16 @@ resource "oci_core_subnet" "Private-Subnet-For-K8-API-Endpoint" {
 
 resource "oci_core_route_table" "Route-Table-For-Private-K8-API-Endpoint-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-RT-For-K8s-API-Endpoint"
   route_rules {
     destination       = "0.0.0.0/0"
-    network_entity_id = oci_core_nat_gateway.ngw[0].id
+    network_entity_id = oci_core_nat_gateway.ngw.id
   }
   route_rules {
     destination       = "all-nrt-services-in-oracle-services-network"
     destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.sgw[0].id
+    network_entity_id = oci_core_service_gateway.sgw.id
   }
 }
 
@@ -115,11 +115,11 @@ resource "oci_core_subnet" "Private-Subnet-For-Worker-Nodes" {
 
 resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-RT-For-Worker-Nodes"
   route_rules {
     destination       = "0.0.0.0/0"
-    network_entity_id = oci_core_nat_gateway.ngw[0].id
+    network_entity_id = oci_core_nat_gateway.ngw.id
   }
 }
 
@@ -164,11 +164,11 @@ resource "oci_core_subnet" "Public-Subnet-For-Load-Balancers" {
 
 resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-RT-For-Load-Balancers"
   route_rules {
     destination       = "0.0.0.0/0"
-    network_entity_id = oci_core_internet_gateway.igw[0].id
+    network_entity_id = oci_core_internet_gateway.igw.id
   }
 }
 
