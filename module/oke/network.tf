@@ -41,9 +41,9 @@ resource "oci_core_subnet" "Private-Subnet-For-K8-API-Endpoint" {
   compartment_id             = var.compartment_ocid
   display_name               = "${var.env}-Private-Subnet-For-K8s-API-Endpoint"
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.Route-Table-For-Private-K8-API-Endpoint-Subnet[0].id
-  security_list_ids          = [oci_core_security_list.Security-List-For-K8-APIendpoint[0].id]
-  vcn_id                     = oci_core_vcn.this[0].id
+  route_table_id             = oci_core_route_table.Route-Table-For-Private-K8-API-Endpoint-Subnet.id
+  security_list_ids          = [oci_core_security_list.Security-List-For-K8-APIendpoint.id]
+  vcn_id                     = oci_core_vcn.this.id
 }
 
 resource "oci_core_route_table" "Route-Table-For-Private-K8-API-Endpoint-Subnet" {
@@ -108,9 +108,9 @@ resource "oci_core_subnet" "Private-Subnet-For-Worker-Nodes" {
   compartment_id             = var.compartment_ocid
   display_name               = "${var.env}-Private-Subnet-For-Worker-Nodes"
   prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.Route-Table-For-Private-Subnet-For-Worker-Nodes[0].id
-  security_list_ids          = [oci_core_security_list.Security-List-For-Private-Subnet-For-Worker-Nodes[0].id]
-  vcn_id                     = oci_core_vcn.this[0].id
+  route_table_id             = oci_core_route_table.Route-Table-For-Private-Subnet-For-Worker-Nodes.id
+  security_list_ids          = [oci_core_security_list.Security-List-For-Private-Subnet-For-Worker-Nodes.id]
+  vcn_id                     = oci_core_vcn.this.id
 }
 
 resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes" {
@@ -157,9 +157,9 @@ resource "oci_core_subnet" "Public-Subnet-For-Load-Balancers" {
   compartment_id             = var.compartment_ocid
   display_name               = "${var.env}-Public-Subnet-For-Load-Balancers"
   prohibit_public_ip_on_vnic = false
-  route_table_id             = oci_core_route_table.Route-Table-For-Public-Load-Balancers-Subnet[0].id
-  security_list_ids          = [oci_core_security_list.Security-List-For-Public-Load-Balancers-Subnet[0].id]
-  vcn_id                     = oci_core_vcn.this[0].id
+  route_table_id             = oci_core_route_table.Route-Table-For-Public-Load-Balancers-Subnet.id
+  security_list_ids          = [oci_core_security_list.Security-List-For-Public-Load-Balancers-Subnet.id]
+  vcn_id                     = oci_core_vcn.this.id
 }
 
 resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
