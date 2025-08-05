@@ -29,3 +29,35 @@ output "web-app-firewall-state" {
 output "web-app-firewall-time-created" {
   value = module.waf.web-app-firewall-time-created
 }
+
+output "api-gateway-OCID" {
+  value = module.api-gateway.api-gateway-OCID
+}
+
+output "api-gateway-name" {
+  value = module.api-gateway.api-gateway-name
+}
+
+output "api-gateway-state" {
+  value = module.api-gateway.api-gateway-state
+}
+
+output "api-gateway-time-created" {
+  value = module.api-gateway.api-gateway-time-created
+}
+
+output "deployment-OCID" {
+  value = module.api-gateway.deployment-OCID
+}
+
+output "deployment-name" {
+  value = module.api-gateway.deployment-name
+}
+
+output "deployment-state" {
+  value = module.api-gateway.deployment-state
+}
+
+output "deployment-time-created" {
+  value = module.api-gateway.deployment-time-created
+}

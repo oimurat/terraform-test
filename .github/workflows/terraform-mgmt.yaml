@@ -33,12 +33,12 @@ jobs:
           cd ./env/mgmt
           terraform plan -out=tfplan
 
-      # - name: Terraform Apply
-      #   run: |
-      #     cd ./env/mgmt
-      #     terraform apply -auto-approve tfplan
+      - name: Terraform Apply
+        run: |
+          cd ./env/mgmt
+          terraform apply -auto-approve tfplan
 
-      # - name: Terraform Destroy
-      #   run: |
-      #     cd ./env/mgmt
-      #     terraform destroy -auto-approve
+      - name: Terraform Destroy
+        run: |
+          cd ./env/mgmt
+          terraform destroy -auto-approve

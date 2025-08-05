@@ -43,3 +43,8 @@ variable "load_balancer_ocid" {
   description = "管理環境ロードバランサーのOCID"
   type        = string
 }
+
+variable "subnet_ocid" {
+  description = "管理環境サブネットのOCID"
+  type        = string
+}
