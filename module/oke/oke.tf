@@ -3,11 +3,11 @@ resource "oci_containerengine_cluster" "oke_cluster" {
   compartment_id     = var.compartment_ocid
   kubernetes_version = "v1.33.1"
   name               = "${var.env}-cluster"
-  vcn_id             = oci_core_vcn.this[0].id
+  vcn_id             = oci_core_vcn.this.id
 
   endpoint_config {
     is_public_ip_enabled = false
-    subnet_id            = oci_core_subnet.Private-Subnet-For-K8-API-Endpoint[0].id # ★プライベートサブネットを指定
+    subnet_id            = oci_core_subnet.Private-Subnet-For-K8-API-Endpoint.id # ★プライベートサブネットを指定
   }
 
   options {
@@ -17,7 +17,7 @@ resource "oci_containerengine_cluster" "oke_cluster" {
     kubernetes_network_config {
       services_cidr = "10.96.1.0/16"
     }
-    service_lb_subnet_ids = [oci_core_subnet.Public-Subnet-For-Load-Balancers[0].id]
+    service_lb_subnet_ids = [oci_core_subnet.Public-Subnet-For-Load-Balancers.id]
   }
   type = "ENHANCED_CLUSTER"
 }
