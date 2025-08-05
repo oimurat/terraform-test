@@ -9,19 +9,19 @@ resource "oci_core_vcn" "this" {
 resource "oci_core_internet_gateway" "igw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-Internet-Gateway"
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
 }
 
 resource "oci_core_nat_gateway" "ngw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-NAT-Gateway"
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
 }
 
 resource "oci_core_service_gateway" "sgw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-Service-Gateway"
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   services {
     service_id = data.oci_core_services.all_oci_services.services[0].id
   }
@@ -63,7 +63,7 @@ resource "oci_core_route_table" "Route-Table-For-Private-K8-API-Endpoint-Subnet"
 
 resource "oci_core_security_list" "Security-List-For-K8-APIendpoint" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-SL-For-K8s-API-Endpoint"
 
   ingress_security_rules {
@@ -125,7 +125,7 @@ resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes
 
 resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-Nodes" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-SL-For-Worker-Nodes"
 
   ingress_security_rules {
@@ -174,7 +174,7 @@ resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
 
 resource "oci_core_security_list" "Security-List-For-Public-Load-Balancers-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this[0].id
+  vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.env}-SL-For-Load-Balancers"
 
   ingress_security_rules {
