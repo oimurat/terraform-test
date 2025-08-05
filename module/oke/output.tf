@@ -3,7 +3,7 @@ output "oke_cluster_OCID" {
 }
 
 output "oke_cluster_name" {
-  value = oci_containerengine_cluster.oke_cluster.display_name
+  value = oci_containerengine_cluster.oke_cluster.name
 }
 
 output "oke_cluster_state" {
@@ -11,7 +11,7 @@ output "oke_cluster_state" {
 }
 
 output "oke_cluster_time_created" {
-  value = oci_containerengine_cluster.oke_cluster.time_created
+  value = oci_containerengine_cluster.oke_cluster.metadata.time_created
 }
 
 output "node_pool_OCID" {

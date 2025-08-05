@@ -32,7 +32,7 @@ resource "oci_containerengine_node_pool" "node_pool_one" {
   depends_on = [oci_containerengine_cluster.oke_cluster]
   for_each   = var.node_pools
 
-  cluster_id       = oci_containerengine_cluster.oke_cluster[0].id
+  cluster_id       = oci_containerengine_cluster.oke_cluster.id
   compartment_id   = var.compartment_ocid
   name             = "${var.env}-node-pool"
   node_shape       = "VM.Standard.E4.Flex"
@@ -41,7 +41,7 @@ resource "oci_containerengine_node_pool" "node_pool_one" {
   node_config_details {
     placement_configs {
       availability_domain = data.oci_identity_availability_domains.ad.availability_domains[0].name
-      subnet_id           = oci_core_subnet.Private-Subnet-For-Worker-Nodes[0].id
+      subnet_id           = oci_core_subnet.Private-Subnet-For-Worker-Nodes.id
     }
     size = each.value.number_of_nodes
   }
