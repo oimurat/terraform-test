@@ -48,3 +48,28 @@ variable "subnet_ocid" {
   description = "管理環境サブネットのOCID"
   type        = string
 }
+
+variable "vcn_cidr_block" {
+  description = "管理環境VCNのCIDRブロック"
+  default = "10.0.0.0/16"
+}
+
+variable "k8s_api_endpoint_private_subnet_cidr_block" {
+  description = "管理環境k8s APIエンドポイントプライベートサブネットのCIDRブロック"
+  default = "10.0.0.0/28"
+}
+
+variable "worker_nodes_private_subnet_cidr_block" {
+  description = "管理環境ワーカーノードプライベートサブネットのCIDRブロック"
+  default = "10.0.10.0/24"
+}
+
+variable "service_loadbalancers_public_subnet_cidr_block" {
+  description = "管理環境サービスロードバランサーパブリックサブネットのCIDRブロック"
+  default = "10.0.20.0/24"
+}
+
+variable "node_pools" {
+  description = "管理環境ノードプールの設定"
+  type = map(any)
+}

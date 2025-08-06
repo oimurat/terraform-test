@@ -11,3 +11,14 @@ module "api-gateway" {
   compartment_ocid = var.compartment_ocid
   subnet_ocid = var.subnet_ocid
 }
+
+module "oke" {
+  source = "../../module/oke"
+  env = var.env
+  compartment_ocid = var.compartment_ocid
+  vcn_cidr_block = var.vcn_cidr_block
+  k8s_api_endpoint_private_subnet_cidr_block = var.k8s_api_endpoint_private_subnet_cidr_block
+  worker_nodes_private_subnet_cidr_block = var.worker_nodes_private_subnet_cidr_block
+  service_loadbalancers_public_subnet_cidr_block = var.service_loadbalancers_public_subnet_cidr_block
+  node_pools = var.node_pools
+}

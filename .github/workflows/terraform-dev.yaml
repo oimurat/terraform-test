@@ -16,9 +16,9 @@ jobs:
       TF_VAR_subnet_ocid: ${{ secrets.OCI_DEVELOPMENT_SUBNET_OCID }}
       TF_VAR_load_balancer_ocid: ${{ secrets.OCI_DEVELOPMENT_LOAD_BALANCER_OCID }}
       TF_VAR_vcn_cidr_block: ${{ secrets.OCI_DEVELOPMENT_VCN_CIDR_BLOCK }}
-      TF_VAR_k8apiendpoint_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_K8APIENDPOINT_PRIVATE_SUBNET_CIDR_BLOCK }}
-      TF_VAR_workernodes_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_WORKERNODES_PRIVATE_SUBNET_CIDR_BLOCK }}
-      TF_VAR_serviceloadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_SERVICELBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
+      TF_VAR_k8s_api_endpoint_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_K8S_API_ENDPOINT_PRIVATE_SUBNET_CIDR_BLOCK }}
+      TF_VAR_worker_nodes_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_WORKER_NODES_PRIVATE_SUBNET_CIDR_BLOCK }}
+      TF_VAR_service_loadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_SERVICE_LOADBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
       TF_VAR_node_pools: ${{ secrets.OCI_DEVELOPMENT_NODE_POOLS }}
 
     steps:

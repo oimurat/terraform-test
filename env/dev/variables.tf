@@ -51,22 +51,22 @@ variable "subnet_ocid" {
 
 variable "vcn_cidr_block" {
   description = "開発環境VCNのCIDRブロック"
-  default = "10.0.0.0/16"
+  default = "10.3.0.0/16"
 }
 
-variable "k8apiendpoint_private_subnet_cidr_block" {
-  description = "開発環境K8s APIエンドポイントプライベートサブネットのCIDRブロック"
-  default = "10.0.0.0/28"
+variable "k8s_api_endpoint_private_subnet_cidr_block" {
+  description = "開発環境k8s APIエンドポイントプライベートサブネットのCIDRブロック"
+  default = "10.3.0.0/28"
 }
 
-variable "workernodes_private_subnet_cidr_block" {
+variable "worker_nodes_private_subnet_cidr_block" {
   description = "開発環境ワーカーノードプライベートサブネットのCIDRブロック"
-  default = "10.0.10.0/24"
+  default = "10.3.10.0/24"
 }
 
-variable "serviceloadbalancers_public_subnet_cidr_block" {
+variable "service_loadbalancers_public_subnet_cidr_block" {
   description = "開発環境サービスロードバランサーパブリックサブネットのCIDRブロック"
-  default = "10.0.20.0/24"
+  default = "10.3.20.0/24"
 }
 
 variable "node_pools" {

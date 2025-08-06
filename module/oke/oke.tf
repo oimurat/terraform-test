@@ -7,7 +7,7 @@ resource "oci_containerengine_cluster" "oke_cluster" {
 
   endpoint_config {
     is_public_ip_enabled = false
-    subnet_id            = oci_core_subnet.Private-Subnet-For-K8-API-Endpoint.id # ★プライベートサブネットを指定
+    subnet_id            = oci_core_subnet.Private-Subnet-For-k8s-API-Endpoint.id # ★プライベートサブネットを指定
   }
 
   options {
