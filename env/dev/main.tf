@@ -23,5 +23,6 @@ module "oke" {
   node_pools = var.node_pools
   vcn_id = oci_core_vcn.this.id
   k8s_api_endpoint_subnet_id = oci_core_subnet.Private-Subnet-For-k8s-API-Endpoint.id
+  worker_nodes_private_subnet_id = oci_core_subnet.Private-Subnet-For-Worker-Nodes.id
   load_balancers_subnet_id = oci_core_subnet.Public-Subnet-For-Load-Balancers.id
 }
