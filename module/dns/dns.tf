@@ -92,14 +92,14 @@ resource "oci_dns_rrset" "public_records_a" {
 resource "oci_dns_rrset" "lb_record_a" {
   count = length(local.target_lb_object) == 1 ? 1 : 0
 
-  zone_name_or_id = oci_dns_zone.private_zone.id
-  domain          = "graphql.dev.${oci_dns_zone.private_zone.name}"
+  zone_name_or_id = oci_dns_zone.public_zone.id
+  domain          = "graphql.dev.${oci_dns_zone.public_zone.name}"
   rtype           = "A"
   # scope           = "PRIVATE"
   # view_id         = data.oci_dns_views.private_view.views[0].id
 
   items {
-    domain = "graphql.dev.${oci_dns_zone.private_zone.name}"
+    domain = "graphql.dev.${oci_dns_zone.public_zone.name}"
     rdata  = local.target_lb_object[0].ip_addresses[0]
     rtype  = "A"
     ttl    = 300
