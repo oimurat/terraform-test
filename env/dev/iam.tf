@@ -19,7 +19,7 @@ resource "oci_identity_dynamic_group" "dev_native_ingress_controller_dyn_group" 
     #Required
     compartment_id = var.tenancy_ocid
     description = "Terraformで作成したEC外販で使用するIngress Controllerダイナミックグループ"
-    matching_rule = "instance.compartment.id = '${var.compartment_ocid}'"
+    matching_rule = "ALL{instance.compartment.id = '${var.compartment_ocid}'}"
     name = "Dev-Native-Ingress-Controller-Dyn-Group"
 }
 
