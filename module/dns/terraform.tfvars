@@ -8,7 +8,7 @@ region           = "ap-tokyo-1"
 # リソース配置情報
 compartment_id = ""
 
-vcn_id         = ""
+vcn_id = ""
 
 lb_ocid = "" # ← コピーしたLBのOCID
 

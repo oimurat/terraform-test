@@ -32,10 +32,10 @@ resource "oci_containerengine_node_pool" "node_pool_one" {
   depends_on = [oci_containerengine_cluster.oke_cluster]
   for_each   = var.node_pools
 
-  cluster_id       = oci_containerengine_cluster.oke_cluster.id
-  compartment_id   = var.compartment_ocid
-  name             = "${var.env}-node-pool"
-  node_shape       = "VM.Standard.E4.Flex"
+  cluster_id         = oci_containerengine_cluster.oke_cluster.id
+  compartment_id     = var.compartment_ocid
+  name               = "${var.env}-node-pool"
+  node_shape         = "VM.Standard.E4.Flex"
   kubernetes_version = "v1.33.1"
 
   node_config_details {
@@ -52,8 +52,8 @@ resource "oci_containerengine_node_pool" "node_pool_one" {
   }
 
   node_source_details {
-    image_id    = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaaayciyuq2akqdjmoxv444besgde5tbkcskcbj5dhewjnwhqqplnnq"
-    source_type = "IMAGE"
+    image_id                = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaaayciyuq2akqdjmoxv444besgde5tbkcskcbj5dhewjnwhqqplnnq"
+    source_type             = "IMAGE"
     boot_volume_size_in_gbs = "50"
   }
   ssh_public_key = each.value.ssh_key

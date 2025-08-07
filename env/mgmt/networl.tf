@@ -67,22 +67,22 @@ resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
   display_name   = "${var.env}-SL-For-k8ss-API-Endpoint"
 
   ingress_security_rules {
-    protocol    = "6"
-    source      = var.worker_nodes_private_subnet_cidr_block
-    stateless   = false
+    protocol  = "6"
+    source    = var.worker_nodes_private_subnet_cidr_block
+    stateless = false
     tcp_options {
       min = 6443
       max = 6443
-      }
+    }
   }
   ingress_security_rules {
-    protocol    = "6"
-    source      = var.worker_nodes_private_subnet_cidr_block
-    stateless   = false
+    protocol  = "6"
+    source    = var.worker_nodes_private_subnet_cidr_block
+    stateless = false
     tcp_options {
       min = 12250
       max = 12250
-      }
+    }
   }
 
   egress_security_rules {
@@ -98,7 +98,7 @@ resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
     tcp_options {
       min = 443
       max = 443
-      }
+    }
   }
 }
 
@@ -129,19 +129,19 @@ resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-N
   display_name   = "${var.env}-SL-For-Worker-Nodes"
 
   ingress_security_rules {
-    protocol    = "all"
-    source      = var.worker_nodes_private_subnet_cidr_block
-    stateless   = false
+    protocol  = "all"
+    source    = var.worker_nodes_private_subnet_cidr_block
+    stateless = false
   }
   ingress_security_rules {
-    protocol    = "all"
-    source      = var.k8s_api_endpoint_private_subnet_cidr_block
-    stateless   = false
+    protocol  = "all"
+    source    = var.k8s_api_endpoint_private_subnet_cidr_block
+    stateless = false
   }
   ingress_security_rules {
-    protocol    = "all"
-    source      = var.service_loadbalancers_public_subnet_cidr_block
-    stateless   = false
+    protocol  = "all"
+    source    = var.service_loadbalancers_public_subnet_cidr_block
+    stateless = false
   }
 
   egress_security_rules {

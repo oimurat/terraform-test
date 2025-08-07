@@ -79,7 +79,7 @@ variable "private_zone_name" {
 variable "a_records" {
   description = "作成するAレコードのマップ（キー: サブドメイン, 値: IPアドレス）"
   type        = map(string)
-  default     = {
+  default = {
     "graphql.dev.ec-gaihan-development.com" = "141.147.170.87"
   }
 }
