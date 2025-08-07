@@ -23,10 +23,6 @@ variable "private_key_path" {
 }
 
 
-# variables.tf
-
-# (ファイルの末尾などに追加)
-
 variable "lb_ocid" {
   description = "IPアドレスを取得したいロードバランサのOCID"
   type        = string
@@ -62,36 +58,6 @@ variable "forwarding_rules" {
 }
 
 
-# variable "forwarding_rules" {
-#   description = "リゾルバに設定する転送ルールのマップ"
-#   type = map(object({
-#     client_address_conditions = optional(list(string))
-#     domains                   = list(string)
-#     destination_addresses     = list(string)
-#   }))
-#   default = {} # ルールが不要な場合でもエラーにならないようにデフォルト値を設定
-# }
-
-# variable "region" {
-#   type        = string
-#   description = "The OCI region where resources will be created"
-# }
-
-# variable "compartment_id" {
-#   type        = string
-#   description = "The OCID of the compartment to create resources in"
-# }
-
-
-
-# variable "zone_name" {
-#   description = "DNSゾーンの名前"
-#   type        = string
-#   default     = "example.private"
-# }
-
-# variables.tf
-
 variable "region" {
   description = "OCIリージョン"
   type        = string
@@ -117,11 +83,3 @@ variable "a_records" {
     "graphql.dev.ec-gaihan-development.com" = "141.147.170.87"
   }
 }
-
-# variable "cname_records" {
-#   description = "作成するCNAMEレコードのマップ（キー: エイリアス名, 値: ターゲットのサブドメイン名）"
-#   type        = map(string)
-#   default     = {
-#     "www" = "graphql.dev"
-#   }
-# }

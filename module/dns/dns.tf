@@ -61,11 +61,11 @@ resource "oci_dns_resolver" "resolver_rules" {
   dynamic "rules" {
     for_each = var.forwarding_rules
     content {
-      action                  = "FORWARD"
+      action                    = "FORWARD"
       client_address_conditions = rules.value.client_address_conditions
-      qname_cover_conditions  = rules.value.domains
-      destination_addresses   = rules.value.destination_addresses
-      source_endpoint_name    = oci_dns_resolver_endpoint.forwarding_endpoint.name
+      qname_cover_conditions    = rules.value.domains
+      destination_addresses     = rules.value.destination_addresses
+      source_endpoint_name      = oci_dns_resolver_endpoint.forwarding_endpoint.name
     }
   }
   lifecycle {

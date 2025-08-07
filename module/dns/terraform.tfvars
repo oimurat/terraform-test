@@ -9,21 +9,11 @@ region           = "ap-tokyo-1"
 compartment_id = ""
 
 vcn_id         = ""
-# --- LB用の設定を追加 ---
-# ↓ ここにLBのOCIDを記述します
-lb_ocid = "" # ← コピーしたLBのOCID
 
-# terraform.tfvars
+lb_ocid = "" # ← コピーしたLBのOCID
 
 # ↓ この行を追記します
 endpoint_subnet_id = ""
-
-# terraform.tfvars
-
-# ↓ この変数を追記します
-# forwarding_rules = {}
-
-# terraform.tfvars
 
 # ↓ この変数を追記します
 forwarding_rules = {
