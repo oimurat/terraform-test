@@ -2,7 +2,7 @@
 
 # 1. プライベートDNSビューの情報を取得
 data "oci_dns_views" "private_view" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   scope          = "PRIVATE"
 }
 
@@ -13,23 +13,21 @@ data "oci_core_vcn_dns_resolver_association" "vcn_dns_resolver_association" {
 
 # 3. コンパートメント内の【すべて】のロードバランサ情報をリストとして取得
 data "oci_load_balancers" "all_compartment_lbs" {
-  count = var.lb_ocid != "" ? 1 : 0
-
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
 }
 
 # 4. 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
 locals {
   # var.lb_ocidが空の場合は空のリスト、それ以外はデータソースからリストを取得
-  lb_list = var.lb_ocid != "" ? data.oci_load_balancers.all_compartment_lbs[0].load_balancers : []
+  lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs[0].load_balancers : []
 
   # forループを使い、リストの中から var.lb_ocid とIDが一致するものを抽出
-  target_lb_object = [for lb in local.lb_list : lb if lb.id == var.lb_ocid]
+  target_lb_object = [for lb in local.lb_list : lb if lb.id == var.load_balancer_ocid]
 }
 
 # 5. プライベートDNSゾーンを作成
 resource "oci_dns_zone" "private_zone" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   name           = var.private_zone_name
   zone_type      = "PRIMARY"
   scope          = "PRIVATE"
@@ -40,7 +38,7 @@ resource "oci_dns_zone" "private_zone" {
 resource "oci_dns_resolver_endpoint" "forwarding_endpoint" {
   name          = "forwarding_ep"
   resolver_id   = data.oci_core_vcn_dns_resolver_association.vcn_dns_resolver_association.dns_resolver_id
-  subnet_id     = var.endpoint_subnet_id
+  subnet_id     = var.subnet_id
   is_forwarding = true
   is_listening  = false
   scope         = "PRIVATE"
@@ -49,7 +47,7 @@ resource "oci_dns_resolver_endpoint" "forwarding_endpoint" {
 resource "oci_dns_resolver_endpoint" "listening_endpoint" {
   name          = "listening_ep"
   resolver_id   = data.oci_core_vcn_dns_resolver_association.vcn_dns_resolver_association.dns_resolver_id
-  subnet_id     = var.endpoint_subnet_id
+  subnet_id     = var.subnet_id
   is_forwarding = false
   is_listening  = true
   scope         = "PRIVATE"
