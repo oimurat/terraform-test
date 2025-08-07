@@ -36,21 +36,21 @@ resource "oci_dns_rrset" "public_records_a" {
 }
 
 
-# # 8. ロードバランサ用のAレコードを作成（修正済み）
-# resource "oci_dns_rrset" "lb_record_a" {
-#   count = length(local.target_lb_object) == 1 ? 1 : 0
+# 8. ロードバランサ用のAレコードを作成（修正済み）
+resource "oci_dns_rrset" "lb_record_a" {
+  count = length(local.target_lb_object) == 1 ? 1 : 0
 
-#   zone_name_or_id = oci_dns_zone.public_zone.id
-#   domain          = "graphql.dev.${oci_dns_zone.public_zone.name}"
-#   rtype           = "A"
+  zone_name_or_id = oci_dns_zone.public_zone.id
+  domain          = "graphql.dev.${oci_dns_zone.public_zone.name}"
+  rtype           = "A"
 
-#   items {
-#     domain = "graphql.dev.${oci_dns_zone.public_zone.name}"
-#     rdata  = local.target_lb_object[0].ip_addresses[0]
-#     rtype  = "A"
-#     ttl    = 300
-#   }
-# }
+  items {
+    domain = "graphql.dev.${oci_dns_zone.public_zone.name}"
+    rdata  = local.target_lb_object[0].ip_addresses[0]
+    rtype  = "A"
+    ttl    = 300
+  }
+}
 
 
 #以下はプライベートゾーン作成時
