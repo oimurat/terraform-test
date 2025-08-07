@@ -21,8 +21,7 @@ jobs:
       TF_VAR_service_loadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_SERVICE_LOADBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
       TF_VAR_node_pools: ${{ secrets.OCI_DEVELOPMENT_NODE_POOLS }}
       TF_VAR_vcn_id: ${{ secrets.OCI_DEVELOPMENT_VCN_ID }}
-      TF_VAR_private_zone_name: ${{ secrets.OCI_DEVELOPMENT_PRIVATE_ZONE_NAME }}
-      TF_VAR_forwarding_rules: ${{ secrets.OCI_DEVELOPMENT_FORWARDING_RULES }}
+      TF_VAR_public_zone_name: ${{ secrets.OCI_DEVELOPMENT_PUBLIC_ZONE_NAME }}
       TF_VAR_a_records: ${{ secrets.OCI_DEVELOPMENT_A_RECORDS }}
 
     steps:

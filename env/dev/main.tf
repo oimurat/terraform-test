@@ -28,13 +28,11 @@
 # }
 
 module "dns" {
-  source = "../../module/dns"
-  env = var.env
-  compartment_ocid = var.compartment_ocid
-  vcn_id = var.vcn_id
+  source             = "../../module/dns"
+  env                = var.env
+  compartment_ocid   = var.compartment_ocid
+  vcn_id             = var.vcn_id
   load_balancer_ocid = var.load_balancer_ocid
-  private_zone_name = var.private_zone_name
-  subnet_id = var.subnet_ocid
-  forwarding_rules = var.forwarding_rules
-  a_records = var.a_records
+  public_zone_name   = var.public_zone_name
+  a_records          = var.a_records
 }

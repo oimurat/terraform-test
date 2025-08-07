@@ -74,22 +74,12 @@ variable "node_pools" {
   type        = map(any)
 }
 
-variable "private_zone_name" {
-  description = "開発環境プライベートゾーンの名前"
-  default     = "ec-gaihan-development.com"
-}
-
-variable "forwarding_rules" {
-  description = "開発環境プライベートゾーンの転送ルール"
-  type = map(object({
-    client_address_conditions = optional(list(string))
-    domains                   = list(string)
-    destination_addresses     = list(string)
-  }))
+variable "public_zone_name" {
+  description = "開発環境パブリックゾーンの名前"
 }
 
 variable "a_records" {
-  description = "開発環境プライベートゾーンのAレコード"
+  description = "開発環境パブリックゾーンのAレコード"
   type        = map(string)
 }
 
@@ -97,3 +87,13 @@ variable "vcn_id" {
   description = "開発環境VCNのOCID"
   type        = string
 }
+
+# 以下はプライベートゾーン作成時
+# variable "forwarding_rules" {
+#   description = "開発環境プライベートゾーンの転送ルール"
+#   type = map(object({
+#     client_address_conditions = optional(list(string))
+#     domains                   = list(string)
+#     destination_addresses     = list(string)
+#   }))
+# }

@@ -1,26 +1,22 @@
-# 3. コンパートメント内の【すべて】のロードバランサ情報をリストとして取得
 data "oci_load_balancers" "all_compartment_lbs" {
   compartment_id = var.compartment_ocid
 }
 
-# 4. 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
 locals {
-  # var.lb_ocidが空の場合は空のリスト、それ以外はデータソースからリストを取得
+  # データソースからLBのOCIDのリストを取得
   lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs.load_balancers : []
 
-  # forループを使い、リストの中から var.lb_ocid とIDが一致するものを抽出
+  # リストの中から var.load_balancer_ocid とIDが一致するものを抽出
   target_lb_object = [for lb in local.lb_list : lb if lb.id == var.load_balancer_ocid]
 }
 
-# 5. プライベートDNSゾーンを作成
 resource "oci_dns_zone" "public_zone" {
   compartment_id = var.compartment_ocid
-  name           = var.private_zone_name
+  name           = var.public_zone_name
   zone_type      = "PRIMARY"
 }
 
-# 7. 通常のAレコードを作成
-resource "oci_dns_rrset" "public_records_a" {
+resource "oci_dns_rrset" "public_a_records" {
   for_each = var.a_records
 
   zone_name_or_id = oci_dns_zone.public_zone.id
@@ -35,9 +31,7 @@ resource "oci_dns_rrset" "public_records_a" {
   }
 }
 
-
-# 8. ロードバランサ用のAレコードを作成（修正済み）
-resource "oci_dns_rrset" "lb_record_a" {
+resource "oci_dns_rrset" "lb_a_records" {
   count = length(local.target_lb_object) == 1 ? 1 : 0
 
   zone_name_or_id = oci_dns_zone.public_zone.id
@@ -127,7 +121,7 @@ resource "oci_dns_rrset" "lb_record_a" {
 # }
 
 # # 7. 通常のAレコードを作成
-# resource "oci_dns_rrset" "private_records_a" {
+# resource "oci_dns_rrset" "private_a_records" {
 #   for_each = var.a_records
 
 #   zone_name_or_id = oci_dns_zone.private_zone.id
@@ -144,9 +138,8 @@ resource "oci_dns_rrset" "lb_record_a" {
 #   }
 # }
 
-
 # # 8. ロードバランサ用のAレコードを作成（修正済み）
-# resource "oci_dns_rrset" "lb_record_a" {
+# resource "oci_dns_rrset" "lb_a_records" {
 #   count = length(local.target_lb_object) == 1 ? 1 : 0
 
 #   zone_name_or_id = oci_dns_zone.private_zone.id
@@ -162,4 +155,3 @@ resource "oci_dns_rrset" "lb_record_a" {
 #     ttl    = 300
 #   }
 # }
-
