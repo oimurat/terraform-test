@@ -19,7 +19,7 @@ data "oci_load_balancers" "all_compartment_lbs" {
 # 4. 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
 locals {
   # var.lb_ocidが空の場合は空のリスト、それ以外はデータソースからリストを取得
-  lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs[0].load_balancers : []
+  lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs.load_balancers : []
 
   # forループを使い、リストの中から var.lb_ocid とIDが一致するものを抽出
   target_lb_object = [for lb in local.lb_list : lb if lb.id == var.load_balancer_ocid]
