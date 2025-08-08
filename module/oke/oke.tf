@@ -1,3 +1,4 @@
+# OKEクラスタを作成
 resource "oci_containerengine_cluster" "oke_cluster" {
 
   compartment_id     = var.compartment_ocid
@@ -7,7 +8,7 @@ resource "oci_containerengine_cluster" "oke_cluster" {
 
   endpoint_config {
     is_public_ip_enabled = false
-    subnet_id            = var.k8s_api_endpoint_subnet_id # ★プライベートサブネットを指定
+    subnet_id            = var.k8s_api_endpoint_subnet_id
   }
 
   options {
@@ -22,12 +23,12 @@ resource "oci_containerengine_cluster" "oke_cluster" {
   type = "ENHANCED_CLUSTER"
 }
 
-# Availability Domain Data Source
+# Availability Domainを取得
 data "oci_identity_availability_domains" "ad" {
   compartment_id = var.compartment_ocid
 }
 
-# Node Pool
+# Node Poolを作成
 resource "oci_containerengine_node_pool" "node_pool_one" {
   depends_on = [oci_containerengine_cluster.oke_cluster]
   for_each   = var.node_pools
@@ -57,7 +58,4 @@ resource "oci_containerengine_node_pool" "node_pool_one" {
     boot_volume_size_in_gbs = "50"
   }
   ssh_public_key = each.value.ssh_key
-  #ssh_public_key = file(each.value.ssh_key)
-  #ssh公開鍵貼り付けで検証
-  #要修正
 }

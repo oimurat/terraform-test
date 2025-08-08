@@ -1,3 +1,4 @@
+# WAFを作成
 resource "oci_waf_web_app_firewall" "web_app_firewall" {
   #Required
   backend_type               = "LOAD_BALANCER"
@@ -9,7 +10,7 @@ resource "oci_waf_web_app_firewall" "web_app_firewall" {
   display_name = "${var.env}-web-app-firewall"
 }
 
-
+# WAFポリシーを作成
 resource "oci_waf_web_app_firewall_policy" "web_app_firewall_policy" {
   #Required
   compartment_id = var.compartment_ocid

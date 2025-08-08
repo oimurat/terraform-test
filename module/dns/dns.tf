@@ -1,21 +1,27 @@
+# ---パブリックゾーン作成時---
+
+# コンパートメント内の【すべて】のロードバランサ情報をリストとして取得
 data "oci_load_balancers" "all_compartment_lbs" {
   compartment_id = var.compartment_ocid
 }
 
+# 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
 locals {
   # データソースからLBのOCIDのリストを取得
   lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs.load_balancers : []
 
-  # リストの中から var.load_balancer_ocid とIDが一致するものを抽出
+  # リストの中から var.load_balancer_ocid とOCIDが一致するものを抽出
   target_lb_object = [for lb in local.lb_list : lb if lb.id == var.load_balancer_ocid]
 }
 
+# パブリックゾーンを作成
 resource "oci_dns_zone" "public_zone" {
   compartment_id = var.compartment_ocid
   name           = var.public_zone_name
   zone_type      = "PRIMARY"
 }
 
+# Aレコードを作成
 resource "oci_dns_rrset" "public_a_records" {
   for_each = var.a_records
 
@@ -31,7 +37,9 @@ resource "oci_dns_rrset" "public_a_records" {
   }
 }
 
+# ロードバランサ用のAレコードを作成
 resource "oci_dns_rrset" "lb_a_records" {
+  # ロードバランサが1つの場合はAレコードを作成
   count = length(local.target_lb_object) == 1 ? 1 : 0
 
   zone_name_or_id = oci_dns_zone.public_zone.id
@@ -47,25 +55,25 @@ resource "oci_dns_rrset" "lb_a_records" {
 }
 
 
-#以下はプライベートゾーン作成時
+# ---プライベートゾーン作成時---
 
-# # 1. プライベートDNSビューの情報を取得
+# # プライベートDNSビューの情報を取得
 # data "oci_dns_views" "private_view" {
 #   compartment_id = var.compartment_ocid
 #   scope          = "PRIVATE"
 # }
 
-# # 2. VCNにデフォルトで存在するDNSリゾルバの情報を取得
+# # VCNにデフォルトで存在するDNSリゾルバの情報を取得
 # data "oci_core_vcn_dns_resolver_association" "vcn_dns_resolver_association" {
 #   vcn_id = var.vcn_id
 # }
 
-# # 3. コンパートメント内の【すべて】のロードバランサ情報をリストとして取得
+# # コンパートメント内の【すべて】のロードバランサ情報をリストとして取得
 # data "oci_load_balancers" "all_compartment_lbs" {
 #   compartment_id = var.compartment_ocid
 # }
 
-# # 4. 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
+# # 取得したリストから、指定したOCIDに一致するLBを一つだけ探し出す
 # locals {
 #   # var.lb_ocidが空の場合は空のリスト、それ以外はデータソースからリストを取得
 #   lb_list = var.load_balancer_ocid != "" ? data.oci_load_balancers.all_compartment_lbs.load_balancers : []
@@ -74,7 +82,7 @@ resource "oci_dns_rrset" "lb_a_records" {
 #   target_lb_object = [for lb in local.lb_list : lb if lb.id == var.load_balancer_ocid]
 # }
 
-# # 5. プライベートDNSゾーンを作成
+# # プライベートDNSゾーンを作成
 # resource "oci_dns_zone" "private_zone" {
 #   compartment_id = var.compartment_ocid
 #   name           = var.private_zone_name
@@ -83,7 +91,7 @@ resource "oci_dns_rrset" "lb_a_records" {
 #   view_id        = data.oci_dns_views.private_view.views[0].id
 # }
 
-# # 6. エンドポイント、リゾルバ・ルールの定義
+# # エンドポイント、リゾルバ・ルールの定義
 # resource "oci_dns_resolver_endpoint" "forwarding_endpoint" {
 #   name          = "forwarding_ep"
 #   resolver_id   = data.oci_core_vcn_dns_resolver_association.vcn_dns_resolver_association.dns_resolver_id
@@ -120,7 +128,7 @@ resource "oci_dns_rrset" "lb_a_records" {
 #   }
 # }
 
-# # 7. 通常のAレコードを作成
+# # 通常のAレコードを作成
 # resource "oci_dns_rrset" "private_a_records" {
 #   for_each = var.a_records
 
@@ -138,7 +146,7 @@ resource "oci_dns_rrset" "lb_a_records" {
 #   }
 # }
 
-# # 8. ロードバランサ用のAレコードを作成（修正済み）
+# # ロードバランサ用のAレコードを作成
 # resource "oci_dns_rrset" "lb_a_records" {
 #   count = length(local.target_lb_object) == 1 ? 1 : 0
 

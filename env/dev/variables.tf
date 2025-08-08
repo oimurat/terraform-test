@@ -74,6 +74,11 @@ variable "node_pools" {
   type        = map(any)
 }
 
+variable "vcn_id" {
+  description = "開発環境VCNのOCID"
+  type        = string
+}
+
 variable "public_zone_name" {
   description = "開発環境パブリックゾーンの名前"
 }
@@ -83,12 +88,7 @@ variable "a_records" {
   type        = map(string)
 }
 
-variable "vcn_id" {
-  description = "開発環境VCNのOCID"
-  type        = string
-}
-
-# 以下はプライベートゾーン作成時
+# 以下はDNSプライベートゾーン作成時
 # variable "forwarding_rules" {
 #   description = "開発環境プライベートゾーンの転送ルール"
 #   type = map(object({

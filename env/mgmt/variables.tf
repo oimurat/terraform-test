@@ -73,3 +73,17 @@ variable "node_pools" {
   description = "管理環境ノードプールの設定"
   type        = map(any)
 }
+
+variable "vcn_id" {
+  description = "管理環境VCNのOCID"
+  type        = string
+}
+
+variable "public_zone_name" {
+  description = "管理環境パブリックゾーンの名前"
+}
+
+variable "a_records" {
+  description = "管理環境パブリックゾーンのAレコード"
+  type        = map(string)
+}

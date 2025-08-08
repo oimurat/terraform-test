@@ -1,31 +1,35 @@
-resource "oci_core_vcn" "this" {
+# VCNを作成
+resource "oci_core_vcn" "ec_vcn" {
   compartment_id = var.compartment_ocid
   cidr_block     = var.vcn_cidr_block
   display_name   = "${var.env}-VCN"
 }
 
-# Gateways
+# Internet Gatewayを作成
 resource "oci_core_internet_gateway" "igw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-Internet-Gateway"
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
 }
 
+# NAT Gatewayを作成
 resource "oci_core_nat_gateway" "ngw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-NAT-Gateway"
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
 }
 
+# Service Gatewayを作成
 resource "oci_core_service_gateway" "sgw" {
   compartment_id = var.compartment_ocid
   display_name   = "${var.env}-Service-Gateway"
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
   services {
     service_id = data.oci_core_services.all_oci_services.services[0].id
   }
 }
 
+# すべてのOCIサービスを取得
 data "oci_core_services" "all_oci_services" {
   filter {
     name   = "name"
@@ -34,21 +38,22 @@ data "oci_core_services" "all_oci_services" {
   }
 }
 
-# SUBNET 1: Private Subnet for k8ss API Endpoint
+# k8s API Endpoint用のプライベートサブネットを作成
 resource "oci_core_subnet" "Private-Subnet-For-k8s-API-Endpoint" {
   cidr_block                 = var.k8s_api_endpoint_private_subnet_cidr_block
   compartment_id             = var.compartment_ocid
-  display_name               = "${var.env}-Private-Subnet-For-k8ss-API-Endpoint"
+  display_name               = "${var.env}-Private-Subnet-For-k8s-API-Endpoint"
   prohibit_public_ip_on_vnic = true
   route_table_id             = oci_core_route_table.Route-Table-For-Private-k8s-API-Endpoint-Subnet.id
   security_list_ids          = [oci_core_security_list.Security-List-For-k8s-APIendpoint.id]
-  vcn_id                     = oci_core_vcn.this.id
+  vcn_id                     = oci_core_vcn.ec_vcn.id
 }
 
+# k8s API Endpoint用のプライベートサブネットのRoute Tableを作成
 resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.env}-RT-For-k8ss-API-Endpoint"
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-RT-For-k8s-API-Endpoint"
   route_rules {
     destination       = "0.0.0.0/0"
     network_entity_id = oci_core_nat_gateway.ngw.id
@@ -60,10 +65,11 @@ resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet
   }
 }
 
+# k8s API Endpoint用のプライベートサブネットのセキュリティリストを作成
 resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.env}-SL-For-k8ss-API-Endpoint"
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-SL-For-k8s-API-Endpoint"
 
   ingress_security_rules {
     protocol  = "6"
@@ -101,7 +107,7 @@ resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
   }
 }
 
-# SUBNET 2: Private Subnet For Worker Nodes
+# Worker Nodes用のプライベートサブネットを作成
 resource "oci_core_subnet" "Private-Subnet-For-Worker-Nodes" {
   cidr_block                 = var.worker_nodes_private_subnet_cidr_block
   compartment_id             = var.compartment_ocid
@@ -109,12 +115,13 @@ resource "oci_core_subnet" "Private-Subnet-For-Worker-Nodes" {
   prohibit_public_ip_on_vnic = true
   route_table_id             = oci_core_route_table.Route-Table-For-Private-Subnet-For-Worker-Nodes.id
   security_list_ids          = [oci_core_security_list.Security-List-For-Private-Subnet-For-Worker-Nodes.id]
-  vcn_id                     = oci_core_vcn.this.id
+  vcn_id                     = oci_core_vcn.ec_vcn.id
 }
 
+# Worker Nodes用のプライベートサブネットのRoute Tableを作成
 resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-RT-For-Worker-Nodes"
   route_rules {
     destination       = "0.0.0.0/0"
@@ -122,9 +129,10 @@ resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes
   }
 }
 
+# Worker Nodes用のプライベートサブネットのセキュリティリストを作成
 resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-Nodes" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-SL-For-Worker-Nodes"
 
   ingress_security_rules {
@@ -150,7 +158,7 @@ resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-N
   }
 }
 
-# SUBNET 3: Public Subnet For Load Balancers
+# Load Balancers用のパブリックサブネットを作成
 resource "oci_core_subnet" "Public-Subnet-For-Load-Balancers" {
   cidr_block                 = var.service_loadbalancers_public_subnet_cidr_block
   compartment_id             = var.compartment_ocid
@@ -158,12 +166,13 @@ resource "oci_core_subnet" "Public-Subnet-For-Load-Balancers" {
   prohibit_public_ip_on_vnic = false
   route_table_id             = oci_core_route_table.Route-Table-For-Public-Load-Balancers-Subnet.id
   security_list_ids          = [oci_core_security_list.Security-List-For-Public-Load-Balancers-Subnet.id]
-  vcn_id                     = oci_core_vcn.this.id
+  vcn_id                     = oci_core_vcn.ec_vcn.id
 }
 
+# Load Balancers用のパブリックサブネットのRoute Tableを作成
 resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-RT-For-Load-Balancers"
   route_rules {
     destination       = "0.0.0.0/0"
@@ -171,9 +180,10 @@ resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
   }
 }
 
+# Load Balancers用のパブリックサブネットのセキュリティリストを作成
 resource "oci_core_security_list" "Security-List-For-Public-Load-Balancers-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
+  vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-SL-For-Load-Balancers"
 
   ingress_security_rules {

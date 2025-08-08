@@ -21,8 +21,18 @@ module "oke" {
   worker_nodes_private_subnet_cidr_block         = var.worker_nodes_private_subnet_cidr_block
   service_loadbalancers_public_subnet_cidr_block = var.service_loadbalancers_public_subnet_cidr_block
   node_pools                                     = var.node_pools
-  vcn_id                                         = oci_core_vcn.this.id
+  vcn_id                                         = oci_core_vcn.ec_vcn.id
   k8s_api_endpoint_subnet_id                     = oci_core_subnet.Private-Subnet-For-k8s-API-Endpoint.id
   worker_nodes_private_subnet_id                 = oci_core_subnet.Private-Subnet-For-Worker-Nodes.id
   load_balancers_subnet_id                       = oci_core_subnet.Public-Subnet-For-Load-Balancers.id
+}
+
+module "dns" {
+  source             = "../../module/dns"
+  env                = var.env
+  compartment_ocid   = var.compartment_ocid
+  vcn_id             = var.vcn_id
+  load_balancer_ocid = var.load_balancer_ocid
+  public_zone_name   = var.public_zone_name
+  a_records          = var.a_records
 }

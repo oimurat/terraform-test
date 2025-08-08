@@ -1,3 +1,4 @@
+# API Gatewayを作成
 resource "oci_apigateway_gateway" "api_gateway" {
   #Required
   compartment_id = var.compartment_ocid
@@ -8,6 +9,7 @@ resource "oci_apigateway_gateway" "api_gateway" {
   display_name = "${var.env}-api-gateway"
 }
 
+# デプロイメントを作成
 resource "oci_apigateway_deployment" "deployment" {
   #Required
   compartment_id = var.compartment_ocid
