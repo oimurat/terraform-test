@@ -16,3 +16,7 @@ rule "terraform_naming_convention" {
 rule "terraform_comment_syntax" {
   enabled = true
 }
+
+rule "terraform_typed_variables" {
+    enabled = false
+}
