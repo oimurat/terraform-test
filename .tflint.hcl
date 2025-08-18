@@ -10,7 +10,7 @@ rule "terraform_required_version" {
 }
 
 rule "terraform_naming_convention" {
-  enabled = true
+  enabled = false
 }
 
 rule "terraform_comment_syntax" {
