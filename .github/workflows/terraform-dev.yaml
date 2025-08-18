@@ -45,11 +45,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Run TFLint
-        run: |
-          tflint --chdir=env/dev --config=$(realpath .tflint.hcl) --format compact
-          tflint --chdir=module/dns --config=$(realpath .tflint.hcl) --format compact
-          tflint --chdir=module/oke --config=$(realpath .tflint.hcl) --format compact
-          tflint --chdir=module/waf --config=$(realpath .tflint.hcl) --format compact
+        run: tflint --recursive --format=compact
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
