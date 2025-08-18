@@ -42,33 +42,6 @@ data "oci_core_services" "all_oci_services" {
 resource "oci_core_subnet" "Private-Subnet-For-k8s-API-Endpoint" {
   cidr_block                 = var.k8s_api_endpoint_private_subnet_cidr_block
   compartment_id             = var.compartment_ocid
-  display_name               = "${var.env}-Private-Subnet-For-k8s-API-Endpoint"
-  prohibit_public_ip_on_vnic = true
-  route_table_id             = oci_core_route_table.Route-Table-For-Private-k8s-API-Endpoint-Subnet.id
-  security_list_ids          = [oci_core_security_list.Security-List-For-k8s-APIendpoint.id]
-  vcn_id                     = oci_core_vcn.ec_vcn.id
-}
-
-# k8s API Endpoint用のプライベートサブネットのRoute Tableを作成
-resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet" {
-  compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.ec_vcn.id
-  display_name   = "${var.env}-RT-For-k8s-API-Endpoint"
-  route_rules {
-    destination       = "0.0.0.0/0"
-    network_entity_id = oci_core_nat_gateway.ngw.id
-  }
-  route_rules {
-    destination       = "all-nrt-services-in-oracle-services-network"
-    destination_type  = "SERVICE_CIDR_BLOCK"
-    network_entity_id = oci_core_service_gateway.sgw.id
-  }
-}
-
-# k8s API Endpoint用のプライベートサブネットのセキュリティリストを作成
-resource "oci_core_subnet" "Private-Subnet-For-k8s-API-Endpoint" {
-  cidr_block                 = var.k8s_api_endpoint_private_subnet_cidr_block
-  compartment_id             = var.compartment_ocid
   display_name               = "${var.env}-Private-Subnet-For-k8ss-API-Endpoint"
   prohibit_public_ip_on_vnic = true
   route_table_id             = oci_core_route_table.Route-Table-For-Private-k8s-API-Endpoint-Subnet.id
