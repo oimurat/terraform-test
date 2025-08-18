@@ -69,7 +69,7 @@ resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet
 resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.ec_vcn.id
-  display_name   = "${var.env}-SL-For-k8s-API-Endpoint"
+  display_name   = "${var.env}-SL-For-k8ss-API-Endpoint"
 
   ingress_security_rules {
     protocol  = "6"
@@ -92,7 +92,7 @@ resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
 
   egress_security_rules {
     destination = var.worker_nodes_private_subnet_cidr_block
-    protocol    = "all"
+    protocol    = "6"
     stateless   = false
   }
   egress_security_rules {
@@ -135,26 +135,101 @@ resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-N
   vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-SL-For-Worker-Nodes"
 
+  # イングレス・ルール
   ingress_security_rules {
-    protocol  = "all"
-    source    = var.worker_nodes_private_subnet_cidr_block
-    stateless = false
+    protocol    = "6"
+    source      = var.worker_nodes_private_subnet_cidr_block
+    stateless   = false
+    description = "あるワーカー・ノードのポッドが他のワーカー・ノードのポッドと通信することを許可します。"
   }
   ingress_security_rules {
-    protocol  = "all"
-    source    = var.k8s_api_endpoint_private_subnet_cidr_block
-    stateless = false
+    protocol    = "6" # TCP
+    source      = var.k8s_api_endpoint_private_subnet_cidr_block
+    stateless   = false
+    description = "Kubernetesコントロール・プレーンがワーカー・ノードと通信することを許可します。"
   }
   ingress_security_rules {
-    protocol  = "all"
-    source    = var.service_loadbalancers_public_subnet_cidr_block
+    protocol  = "1" # ICMP
+    source    = "0.0.0.0/0"
     stateless = false
+    icmp_options {
+      type = 3
+      code = 4
+    }
+    description = "パス検出。"
   }
 
+
+  ingress_security_rules {
+    protocol  = "6"
+    source    = var.service_loadbalancers_public_subnet_cidr_block
+    stateless = false
+    tcp_options {
+      min = 30000
+      max = 32767
+    }
+    description = "ロード・バランサからワーカー・ノード・ポートへの通信。"
+  }
+  ingress_security_rules {
+    protocol  = "6"
+    source    = var.service_loadbalancers_public_subnet_cidr_block
+    stateless = false
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+    description = "ロード・バランサがワーカー・ノードでkube-proxyと通信できるようにします。"
+  }
+
+  # エグレス・ルール
   egress_security_rules {
-    protocol    = "all"
+    protocol    = "6"
+    destination = var.worker_nodes_private_subnet_cidr_block
+    stateless   = false
+    description = "あるワーカー・ノードのポッドが他のワーカー・ノードのポッドと通信することを許可します。"
+  }
+  egress_security_rules {
+    protocol    = "1" # ICMP
     destination = "0.0.0.0/0"
     stateless   = false
+    icmp_options {
+      type = 3
+      code = 4
+    }
+    description = "パス検出。"
+  }
+  egress_security_rules {
+    protocol         = "6" # TCP
+    destination      = "all-nrt-services-in-oracle-services-network"
+    destination_type = "SERVICE_CIDR_BLOCK"
+    stateless        = false
+    description      = "ワーカー・ノードがOKEと通信することを許可します。"
+  }
+  egress_security_rules {
+    protocol    = "6" # TCP
+    destination = var.k8s_api_endpoint_private_subnet_cidr_block
+    stateless   = false
+    tcp_options {
+      min = 6443
+      max = 6443
+    }
+    description = "KubernetesワーカーからKubernetes APIエンドポイントへの通信。"
+  }
+  egress_security_rules {
+    protocol    = "6" # TCP
+    destination = var.k8s_api_endpoint_private_subnet_cidr_block
+    stateless   = false
+    tcp_options {
+      min = 12250
+      max = 12250
+    }
+    description = "Kubernetesワーカーからコントロール・プレーンへの通信。"
+  }
+  egress_security_rules {
+    protocol    = "6" # TCP
+    destination = "0.0.0.0/0"
+    stateless   = false
+    description = "ワーカー・ノードがインターネットと通信することを許可します (オプション)。"
   }
 }
 
@@ -186,19 +261,33 @@ resource "oci_core_security_list" "Security-List-For-Public-Load-Balancers-Subne
   vcn_id         = oci_core_vcn.ec_vcn.id
   display_name   = "${var.env}-SL-For-Load-Balancers"
 
+  # イングレス・ルール
   ingress_security_rules {
-    protocol  = "6" # TCP
-    source    = "0.0.0.0/0"
-    stateless = false
+    protocol    = "6" # TCP
+    source      = "0.0.0.0/0"
+    stateless   = false
+    description = "アプリケーション固有 (インターネットまたは特定のCIDR)"
   }
 
+  # エグレス・ルール
   egress_security_rules {
     destination = var.worker_nodes_private_subnet_cidr_block
-    protocol    = "6" # TCP
+    protocol    = "6"
     stateless   = false
     tcp_options {
       min = 30000
       max = 32767
     }
+    description = "ロード・バランサからワーカー・ノード・ポートへの通信。"
+  }
+  egress_security_rules {
+    destination = var.worker_nodes_private_subnet_cidr_block
+    protocol    = "6"
+    stateless   = false
+    tcp_options {
+      min = 10256
+      max = 10256
+    }
+    description = "ロード・バランサがワーカー・ノードでkube-proxyと通信できるようにします。"
   }
 }
