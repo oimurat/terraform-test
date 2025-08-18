@@ -34,5 +34,5 @@ module "dns" {
   vcn_id             = var.vcn_id
   load_balancer_ocid = var.load_balancer_ocid
   public_zone_name   = var.public_zone_name
-  a_records          =            var.a_records
+  a_records          = var.a_records
 }
