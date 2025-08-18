@@ -31,6 +31,36 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: TFLint Setup
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: TFLint Init
+        run: tflint --init
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run TFLint
+        run: |
+          # 失敗を記録するための変数を用意 (0は成功)
+          EXIT_CODE=0
+
+          # 各ディレクトリでtflintを実行し、失敗したらEXIT_CODEを1に設定する
+          # "|| EXIT_CODE=1" を各コマンドの末尾に追加
+          tflint --chdir=env/mgmt --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+          tflint --chdir=module/dns --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+          tflint --chdir=module/oke --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+          tflint --chdir=module/waf --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+
+          # EXIT_CODEが1（失敗）の場合、ステップをエラーで終了させる
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "TFLint found issues."
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Terraform Init
         run: |
           cd ./env/mgmt
