@@ -69,17 +69,17 @@ resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet
 resource "oci_core_subnet" "Private-Subnet-For-k8s-API-Endpoint" {
   cidr_block                 = var.k8s_api_endpoint_private_subnet_cidr_block
   compartment_id             = var.compartment_ocid
-  display_name               = "-Private-Subnet-For-k8ss-API-Endpoint" #${var.env}
+  display_name               = "${var.env}-Private-Subnet-For-k8ss-API-Endpoint"
   prohibit_public_ip_on_vnic = true
   route_table_id             = oci_core_route_table.Route-Table-For-Private-k8s-API-Endpoint-Subnet.id
   security_list_ids          = [oci_core_security_list.Security-List-For-k8s-APIendpoint.id]
-  vcn_id                     = oci_core_vcn.this.id
+  vcn_id                     = oci_core_vcn.ec_vcn.id
 }
 
 resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "-RT-For-k8ss-API-Endpoint" #${var.env}
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-RT-For-k8ss-API-Endpoint"
   route_rules {
     destination       = "0.0.0.0/0"
     network_entity_id = oci_core_nat_gateway.ngw.id
@@ -93,8 +93,8 @@ resource "oci_core_route_table" "Route-Table-For-Private-k8s-API-Endpoint-Subnet
 
 resource "oci_core_security_list" "Security-List-For-k8s-APIendpoint" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "-SL-For-k8ss-API-Endpoint" #${var.env}
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-SL-For-k8ss-API-Endpoint"
 
   ingress_security_rules {
     protocol  = "6"
@@ -158,8 +158,8 @@ resource "oci_core_route_table" "Route-Table-For-Private-Subnet-For-Worker-Nodes
 # Worker Nodes用のプライベートサブネットのセキュリティリストを作成
 resource "oci_core_security_list" "Security-List-For-Private-Subnet-For-Worker-Nodes" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "-SL-For-Worker-Nodes" #${var.env}
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-SL-For-Worker-Nodes"
 
   # イングレス・ルール
   ingress_security_rules {
@@ -286,8 +286,8 @@ resource "oci_core_route_table" "Route-Table-For-Public-Load-Balancers-Subnet" {
 
 resource "oci_core_security_list" "Security-List-For-Public-Load-Balancers-Subnet" {
   compartment_id = var.compartment_ocid
-  vcn_id         = oci_core_vcn.this.id
-  display_name   = "-SL-For-Load-Balancers" #${var.env}
+  vcn_id         = oci_core_vcn.ec_vcn.id
+  display_name   = "${var.env}-SL-For-Load-Balancers"
 
   # イングレス・ルール
   ingress_security_rules {
