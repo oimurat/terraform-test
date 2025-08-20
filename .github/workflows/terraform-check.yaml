@@ -1,0 +1,69 @@
+name: "Terraform-Check"
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - "feature/**"
+
+permissions:
+    contents: write
+
+jobs:
+    terraform-check:
+        name: "Terraform-Check"
+        runs-on: ubuntu-latest
+        env:
+            TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+            TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
+            TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
+            TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+            TF_VAR_region: ${{ secrets.OCI_REGION }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Terraform Setup
+              uses: hashicorp/setup-terraform@v3
+
+            - name: TFLint Setup
+              uses: terraform-linters/setup-tflint@v4
+              with:
+                  tflint_version: latest
+
+            - name: TFLint Init
+              run: tflint --init
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+
+            - name: Run TFLint
+              run: |
+                  # 失敗を記録するための変数を用意 (0は成功)
+                  EXIT_CODE=0
+
+                  # 各ディレクトリでtflintを実行し、失敗したらEXIT_CODEを1に設定する
+                  # "|| EXIT_CODE=1" を各コマンドの末尾に追加
+                  tflint --chdir=env/dev --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+                  tflint --chdir=env/mgmt --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+                  tflint --chdir=module/dns --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+                  tflint --chdir=module/oke --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+                  tflint --chdir=module/waf --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+
+                  # EXIT_CODEが1（失敗）の場合、ステップをエラーで終了させる
+                  if [ $EXIT_CODE -ne 0 ]; then
+                    echo "TFLint found issues."
+                    exit 1
+                  fi
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+
+            - name: Terraform Format Check
+              run: terraform fmt -diff -recursive
+
+            - name: Commit add terraform fmt
+              uses: stefanzweifel/git-auto-commit-action@v6
+              with:
+                  commit_message: "add:terraform fmt"
+                  file_pattern: "**/*.tf"
