@@ -1,0 +1,56 @@
+name: "Terraform-Mgmt-Apply"
+
+on: workflow_dispatch
+
+jobs:
+    terraform-mgmt-apply:
+        name: "Terraform-Mgmt-Apply"
+        runs-on: ubuntu-latest
+        # timeout-minutes: 30
+        env:
+            TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+            TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
+            TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
+            TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+            TF_VAR_region: ${{ secrets.OCI_REGION }}
+            TF_VAR_env: ${{ secrets.MANAGEMENT_ENV_NAME }}
+            TF_VAR_compartment_ocid: ${{ secrets.OCI_MANAGEMENT_COMPARTMENT_OCID }}
+            TF_VAR_subnet_ocid: ${{ secrets.OCI_MANAGEMENT_SUBNET_OCID }}
+            TF_VAR_load_balancer_ocid: ${{ secrets.OCI_MANAGEMENT_LOAD_BALANCER_OCID }}
+            TF_VAR_vcn_cidr_block: ${{ secrets.OCI_MANAGEMENT_VCN_CIDR_BLOCK }}
+            TF_VAR_k8s_api_endpoint_private_subnet_cidr_block: ${{ secrets.OCI_MANAGEMENT_K8S_API_ENDPOINT_PRIVATE_SUBNET_CIDR_BLOCK }}
+            TF_VAR_worker_nodes_private_subnet_cidr_block: ${{ secrets.OCI_MANAGEMENT_WORKER_NODES_PRIVATE_SUBNET_CIDR_BLOCK }}
+            TF_VAR_service_loadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_MANAGEMENT_SERVICE_LOADBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
+            TF_VAR_node_pools: ${{ secrets.OCI_MANAGEMENT_NODE_POOLS }}
+            TF_VAR_vcn_id: ${{ secrets.OCI_MANAGEMENT_VCN_ID }}
+            TF_VAR_public_zone_name: ${{ secrets.OCI_MANAGEMENT_PUBLIC_ZONE_NAME }}
+            TF_VAR_a_records: ${{ secrets.OCI_MANAGEMENT_A_RECORDS }}
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Terraform Setup
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform Init
+              run: |
+                  cd ./env/mgmt
+                  terraform init
+
+            - name: Terraform Plan
+              run: |
+                  cd ./env/mgmt
+                  terraform plan -out=tfplan
+
+            - name: Terraform Apply
+              run: |
+                  cd ./env/mgmt
+                  terraform apply -auto-approve tfplan
+
+            - name: Terraform Destroy
+              run: |
+                  cd ./env/mgmt
+                  terraform destroy -auto-approve
