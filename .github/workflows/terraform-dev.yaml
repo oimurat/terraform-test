@@ -6,94 +6,97 @@ on:
         branches:
             - "feature/**"
 
+permissions:
+    contents: write
+
 jobs:
-  terraform-dev:
-    name: 'Terraform-Dev'
-    runs-on: ubuntu-latest
-    # timeout-minutes: 30
-    env:
-      TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
-      TF_VAR_user_ocid:    ${{ secrets.OCI_USER_OCID }}
-      TF_VAR_private_key:  ${{ secrets.OCI_PRIVATE_KEY }}
-      TF_VAR_fingerprint:  ${{ secrets.OCI_FINGERPRINT }}
-      TF_VAR_region:       ${{ secrets.OCI_REGION }}
-      TF_VAR_env:          ${{ secrets.DEVELOPMENT_ENV_NAME }}
-      TF_VAR_compartment_ocid: ${{ secrets.OCI_DEVELOPMENT_COMPARTMENT_OCID }}
-      TF_VAR_subnet_ocid: ${{ secrets.OCI_DEVELOPMENT_SUBNET_OCID }}
-      TF_VAR_load_balancer_ocid: ${{ secrets.OCI_DEVELOPMENT_LOAD_BALANCER_OCID }}
-      TF_VAR_vcn_cidr_block: ${{ secrets.OCI_DEVELOPMENT_VCN_CIDR_BLOCK }}
-      TF_VAR_k8s_api_endpoint_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_K8S_API_ENDPOINT_PRIVATE_SUBNET_CIDR_BLOCK }}
-      TF_VAR_worker_nodes_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_WORKER_NODES_PRIVATE_SUBNET_CIDR_BLOCK }}
-      TF_VAR_service_loadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_SERVICE_LOADBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
-      TF_VAR_node_pools: ${{ secrets.OCI_DEVELOPMENT_NODE_POOLS }}
-      TF_VAR_vcn_id: ${{ secrets.OCI_DEVELOPMENT_VCN_ID }}
-      TF_VAR_public_zone_name: ${{ secrets.OCI_DEVELOPMENT_PUBLIC_ZONE_NAME }}
-      TF_VAR_a_records: ${{ secrets.OCI_DEVELOPMENT_A_RECORDS }}
+    terraform-dev:
+        name: "Terraform-Dev"
+        runs-on: ubuntu-latest
+        # timeout-minutes: 30
+        env:
+            TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
+            TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
+            TF_VAR_private_key: ${{ secrets.OCI_PRIVATE_KEY }}
+            TF_VAR_fingerprint: ${{ secrets.OCI_FINGERPRINT }}
+            TF_VAR_region: ${{ secrets.OCI_REGION }}
+            TF_VAR_env: ${{ secrets.DEVELOPMENT_ENV_NAME }}
+            TF_VAR_compartment_ocid: ${{ secrets.OCI_DEVELOPMENT_COMPARTMENT_OCID }}
+            TF_VAR_subnet_ocid: ${{ secrets.OCI_DEVELOPMENT_SUBNET_OCID }}
+            TF_VAR_load_balancer_ocid: ${{ secrets.OCI_DEVELOPMENT_LOAD_BALANCER_OCID }}
+            TF_VAR_vcn_cidr_block: ${{ secrets.OCI_DEVELOPMENT_VCN_CIDR_BLOCK }}
+            TF_VAR_k8s_api_endpoint_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_K8S_API_ENDPOINT_PRIVATE_SUBNET_CIDR_BLOCK }}
+            TF_VAR_worker_nodes_private_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_WORKER_NODES_PRIVATE_SUBNET_CIDR_BLOCK }}
+            TF_VAR_service_loadbalancers_public_subnet_cidr_block: ${{ secrets.OCI_DEVELOPMENT_SERVICE_LOADBALANCERS_PUBLIC_SUBNET_CIDR_BLOCK }}
+            TF_VAR_node_pools: ${{ secrets.OCI_DEVELOPMENT_NODE_POOLS }}
+            TF_VAR_vcn_id: ${{ secrets.OCI_DEVELOPMENT_VCN_ID }}
+            TF_VAR_public_zone_name: ${{ secrets.OCI_DEVELOPMENT_PUBLIC_ZONE_NAME }}
+            TF_VAR_a_records: ${{ secrets.OCI_DEVELOPMENT_A_RECORDS }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
+            - name: Terraform Setup
+              uses: hashicorp/setup-terraform@v3
 
-      # - name: TFLint Setup
-      #   uses: terraform-linters/setup-tflint@v4
-      #   with:
-      #     tflint_version: latest
+            # - name: TFLint Setup
+            #   uses: terraform-linters/setup-tflint@v4
+            #   with:
+            #     tflint_version: latest
 
-      # - name: TFLint Init
-      #   run: tflint --init
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
+            # - name: TFLint Init
+            #   run: tflint --init
+            #   env:
+            #     GITHUB_TOKEN: ${{ github.token }}
 
-      # - name: Run TFLint
-      #   run: |
-      #     # 失敗を記録するための変数を用意 (0は成功)
-      #     EXIT_CODE=0
+            # - name: Run TFLint
+            #   run: |
+            #     # 失敗を記録するための変数を用意 (0は成功)
+            #     EXIT_CODE=0
 
-      #     # 各ディレクトリでtflintを実行し、失敗したらEXIT_CODEを1に設定する
-      #     # "|| EXIT_CODE=1" を各コマンドの末尾に追加
-      #     tflint --chdir=env/dev --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
-      #     tflint --chdir=module/dns --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
-      #     tflint --chdir=module/oke --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
-      #     tflint --chdir=module/waf --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+            #     # 各ディレクトリでtflintを実行し、失敗したらEXIT_CODEを1に設定する
+            #     # "|| EXIT_CODE=1" を各コマンドの末尾に追加
+            #     tflint --chdir=env/dev --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+            #     tflint --chdir=module/dns --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+            #     tflint --chdir=module/oke --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
+            #     tflint --chdir=module/waf --config=$(realpath .tflint.hcl) --format compact || EXIT_CODE=1
 
-      #     # EXIT_CODEが1（失敗）の場合、ステップをエラーで終了させる
-      #     if [ $EXIT_CODE -ne 0 ]; then
-      #       echo "TFLint found issues."
-      #       exit 1
-      #     fi
-      #   env:
-      #     GITHUB_TOKEN: ${{ github.token }}
+            #     # EXIT_CODEが1（失敗）の場合、ステップをエラーで終了させる
+            #     if [ $EXIT_CODE -ne 0 ]; then
+            #       echo "TFLint found issues."
+            #       exit 1
+            #     fi
+            #   env:
+            #     GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Terraform Format Check
-        run: terraform fmt -diff -recursive
+            - name: Terraform Format Check
+              run: terraform fmt -diff -recursive
 
-      - name: Commit add terraform fmt
-        uses: stefanzweifel/git-auto-commit-action@v6
-        with:
-          commit_message: "add:terraform fmt"
-          file_pattern: "**/*.tf"
+            - name: Commit add terraform fmt
+              uses: stefanzweifel/git-auto-commit-action@v6
+              with:
+                  commit_message: "add:terraform fmt"
+                  file_pattern: "**/*.tf"
 
-      - name: Terraform Init
-        run: |
-          cd ./env/dev
-          terraform init
+            - name: Terraform Init
+              run: |
+                  cd ./env/dev
+                  terraform init
 
-      - name: Terraform Plan
-        run: |
-          cd ./env/dev
-          terraform plan -out=tfplan
+            - name: Terraform Plan
+              run: |
+                  cd ./env/dev
+                  terraform plan -out=tfplan
 
-      # - name: Terraform Apply
-      #   run: |
-      #     cd ./env/dev
-      #     terraform apply -auto-approve tfplan
+            # - name: Terraform Apply
+            #   run: |
+            #     cd ./env/dev
+            #     terraform apply -auto-approve tfplan
 
-      # - name: Terraform Destroy
-      #   run: |
-      #     cd ./env/dev
-      #     terraform destroy -auto-approve
+            # - name: Terraform Destroy
+            #   run: |
+            #     cd ./env/dev
+            #     terraform destroy -auto-approve
