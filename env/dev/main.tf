@@ -31,8 +31,8 @@ module "dns" {
   source             = "../../module/dns"
   env                = var.env
   compartment_ocid   = var.compartment_ocid
-  vcn_id              = var.vcn_id
-  load_balancer_ocid       = var.load_balancer_ocid
-  public_zone_name = var.public_zone_name
-  a_records                             = var.a_records
+  vcn_id             = var.vcn_id
+  load_balancer_ocid = var.load_balancer_ocid
+  public_zone_name   = var.public_zone_name
+  a_records          = var.a_records
 }
