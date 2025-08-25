@@ -1,12 +1,18 @@
 name: "Terraform-Dev-Apply"
 
-on: workflow_dispatch
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - "main"
+        paths: # 以下のパスに変更がある場合のみ実行
+            - "env/dev/**"
+            - "module/**"
 
 jobs:
     terraform-dev-apply:
         name: "Terraform-Dev-Apply"
         runs-on: ubuntu-latest
-        # timeout-minutes: 30
         env:
             TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY_OCID }}
             TF_VAR_user_ocid: ${{ secrets.OCI_USER_OCID }}
@@ -25,32 +31,31 @@ jobs:
             TF_VAR_vcn_id: ${{ secrets.OCI_DEVELOPMENT_VCN_ID }}
             TF_VAR_public_zone_name: ${{ secrets.OCI_DEVELOPMENT_PUBLIC_ZONE_NAME }}
             TF_VAR_a_records: ${{ secrets.OCI_DEVELOPMENT_A_RECORDS }}
-
         steps:
+            # リポジトリのチェックアウト
             - name: Checkout
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
 
+            # Terraformのセットアップ
             - name: Terraform Setup
               uses: hashicorp/setup-terraform@v3
 
+            # Terraformの初期化
             - name: Terraform Init
               run: |
                   cd ./env/dev
                   terraform init
 
+            # terraform planコマンドによるリソース作成の実行計画作成
             - name: Terraform Plan
               run: |
                   cd ./env/dev
                   terraform plan -out=tfplan
 
+            # terraform applyコマンドによるリソース作成の実行
             - name: Terraform Apply
               run: |
                   cd ./env/dev
                   terraform apply -auto-approve tfplan
-
-            - name: Terraform Destroy
-              run: |
-                  cd ./env/dev
-                  terraform destroy -auto-approve

@@ -31,7 +31,6 @@ jobs:
             TF_VAR_vcn_id: ${{ secrets.OCI_MANAGEMENT_VCN_ID }}
             TF_VAR_public_zone_name: ${{ secrets.OCI_MANAGEMENT_PUBLIC_ZONE_NAME }}
             TF_VAR_a_records: ${{ secrets.OCI_MANAGEMENT_A_RECORDS }}
-
         steps:
             # リポジトリのチェックアウト
             - name: Checkout
@@ -49,7 +48,7 @@ jobs:
                   cd ./env/mgmt
                   terraform init
 
-            # Terraform Planコマンドによるリソース作成の実行計画作成
+            # terraform planコマンドによるリソース作成の実行計画作成
             - name: Terraform Plan
               run: |
                   cd ./env/mgmt
